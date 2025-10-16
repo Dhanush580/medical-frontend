@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { apiUrl } from "@/lib/api";
 
 const AdminRegister = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const AdminRegister = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/admin/register', {
+      const res = await fetch(apiUrl('api/auth/admin/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Heart } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -69,7 +70,7 @@ const Signup = () => {
   const proceedToPayment = async () => {
     setConfirmOpen(false);
     // 1) Request backend to create a registration order
-    const res = await fetch('/api/auth/register-with-order', {
+    const res = await fetch(apiUrl('api/auth/register-with-order'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -136,7 +137,7 @@ const Signup = () => {
         // show interim UI? we'll verify, then show confirmation dialog
         try {
           // 4) Verify payment with backend
-          const verifyRes = await fetch('/api/payments/verify', {
+          const verifyRes = await fetch(apiUrl('api/payments/verify'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(response),
@@ -156,7 +157,7 @@ const Signup = () => {
           }
 
           // 5) On successful verification, create the user record
-          const regRes = await fetch('/api/auth/register', {
+          const regRes = await fetch(apiUrl('api/auth/register'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...tempUser, familyDetails: formData.familyDetails || [] }),

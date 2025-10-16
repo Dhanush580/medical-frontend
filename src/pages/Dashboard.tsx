@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Heart, Calendar, MapPin, Phone, Mail, Search, Filter } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import indiaDistricts from "@/lib/indiaDistricts";
+import { apiUrl } from "@/lib/api";
 
 const Dashboard = () => {
   const [user, setUser] = React.useState<any>(null);
@@ -28,7 +29,7 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const res = await fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch(apiUrl('auth/me'), { headers: { Authorization: `Bearer ${token}` } });
         if (res.ok) {
           const u = await res.json();
           setUser(u);
@@ -44,7 +45,7 @@ const Dashboard = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const res = await fetch('/api/partners/my-visits', { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch(apiUrl('partners/my-visits'), { headers: { Authorization: `Bearer ${token}` } });
         if (res.ok) {
           const visits = await res.json();
           setRecentVisits(visits);
@@ -155,7 +156,7 @@ const Dashboard = () => {
       if (selectedState) params.append('state', selectedState);
       if (selectedDistrict) params.append('district', selectedDistrict);
 
-      const res = await fetch(`/api/partners?${params.toString()}`);
+      const res = await fetch(apiUrl(`partners?${params.toString()}`));
       if (res.ok) {
         const data = await res.json();
         setPartners(data);

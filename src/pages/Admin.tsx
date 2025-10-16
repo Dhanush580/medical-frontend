@@ -5,6 +5,7 @@ import { Heart, Users, Building2, CreditCard, TrendingUp, Calendar } from "lucid
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import React from 'react';
+import { apiUrl } from "@/lib/api";
 
 // Admin actions require an admin token; this UI assumes you're authenticated as admin and have token in localStorage
 
@@ -50,7 +51,7 @@ const Admin = () => {
   const loadApplications = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/partners/applications', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(apiUrl('api/partners/applications'), { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) return;
       const apps = await res.json();
       setApplications(apps);
@@ -62,7 +63,7 @@ const Admin = () => {
   const loadStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/partners/stats', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(apiUrl('api/partners/stats'), { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) return;
       const data = await res.json();
       setStats([
@@ -79,7 +80,7 @@ const Admin = () => {
   const loadRecentMembers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/partners/recent-members', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(apiUrl('api/partners/recent-members'), { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) return;
       const data = await res.json();
       setRecentMembers(data);
@@ -91,7 +92,7 @@ const Admin = () => {
   const loadRecentPartners = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/partners/recent-partners', { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(apiUrl('api/partners/recent-partners'), { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) return;
       const data = await res.json();
       setRecentPartners(data);
@@ -110,7 +111,7 @@ const Admin = () => {
   const approve = async (id: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/partners/applications/${id}/approve`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(apiUrl(`api/partners/applications/${id}/approve`), { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) loadApplications();
     } catch (err) { console.error(err); }
   };
@@ -119,7 +120,7 @@ const Admin = () => {
     const reason = prompt('Reason for rejection (optional)') || '';
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/partners/applications/${id}/reject`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
+      const res = await fetch(apiUrl(`api/partners/applications/${id}/reject`), { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
       if (res.ok) loadApplications();
     } catch (err) { console.error(err); }
   };

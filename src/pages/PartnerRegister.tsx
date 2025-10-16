@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -155,7 +156,7 @@ const PartnerRegister = () => {
       // certificate is required for centers, optional for doctors
       if (certificateFile) form.append('certificateFile', certificateFile, certificateFile.name);
 
-      const res = await fetch('/api/partners/register', {
+      const res = await fetch(apiUrl('api/partners/register'), {
         method: 'POST',
         body: form,
       });

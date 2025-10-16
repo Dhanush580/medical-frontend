@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Heart, Users, Building2, CreditCard, TrendingUp, Calendar, Stethoscope, Pill, Microscope, CheckCircle, XCircle, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { apiUrl } from "@/lib/api";
 
 const PartnerDashboard = () => {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ const PartnerDashboard = () => {
     if (!token) return;
 
     try {
-      const response = await fetch('/api/partners/partner-stats', {
+      const response = await fetch(apiUrl('api/partners/partner-stats'), {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.ok) {
@@ -84,7 +85,7 @@ const PartnerDashboard = () => {
     setVerificationResult(null);
 
     try {
-      const response = await fetch('/api/partners/verify', {
+      const response = await fetch(apiUrl('api/partners/verify'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ const PartnerDashboard = () => {
       // Parse discount percentage (remove % and convert to number)
       const discountPercent = parseFloat(verificationResult.member.discount.replace('%', '')) || 0;
 
-      const response = await fetch('/api/partners/visit', {
+      const response = await fetch(apiUrl('api/partners/visit'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

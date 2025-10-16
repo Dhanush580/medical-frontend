@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Stethoscope, Pill, Microscope } from "lucide-react";
+import { apiUrl } from "@/lib/api";
 
 const PartnerLogin = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const PartnerLogin = () => {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch('/api/partners/login', {
+      const res = await fetch(apiUrl('api/partners/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
