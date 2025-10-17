@@ -1,259 +1,443 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Heart, Shield, Users, Stethoscope, Pill, ClipboardCheck } from "lucide-react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/hero-healthcare.jpg";
+import heroImage from "../assets/hero-healthcare.jpg";
+import { 
+  ArrowRight,
+  CheckCircle,
+  Shield,
+  Users,
+  Heart,
+  Star,
+  BadgePercent,
+  Clock,
+  Stethoscope,
+  Pill,
+  ClipboardCheck,
+  Crown
+} from "lucide-react";
+import { useState } from "react";
 
 const Index = () => {
-  const plans = [
-    {
-      name: 'Annual',
-      price: 365,
-      duration: '12 Months',
-      discount: '10% when family added',
-      popular: true,
-      features: [
-        'Access to partner hospitals nationwide',
-        'Digital membership card',
-        'Add family members for ₹365/person',
-        '10% discount applied on total when family members added',
-      ],
-    },
-  ];
+  const [familyMembers, setFamilyMembers] = useState(1);
+
+  const fadeInUp = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
 
   const features = [
     {
-      icon: Shield,
-      title: "Trusted Network",
-      description: "100+ verified hospitals, clinics, and diagnostic centers across the country",
+      icon: <BadgePercent className="w-8 h-8" />,
+      title: "Save Up to 25%",
+      description: "Significant discounts on medical bills, pharmacy purchases, and diagnostic tests"
     },
     {
-      icon: Heart,
-      title: "Quality Healthcare",
-      description: "Access premium healthcare services at discounted rates with our subscription",
+      icon: <Shield className="w-8 h-8" />,
+      title: "Verified Network",
+      description: "Trusted doctors, pharmacies, and diagnostic centers with proper credentials"
     },
     {
-      icon: Users,
+      icon: <Users className="w-8 h-8" />,
       title: "Family Coverage",
-      description: "Extend benefits to your entire family with our comprehensive family plans",
+      description: "Extend benefits to your entire family with special discounts"
     },
     {
-      icon: Stethoscope,
-      title: "Specialist Access",
-      description: "Connect with top specialists and get priority appointments at partner facilities",
-    },
-    {
-      icon: Pill,
-      title: "Pharmacy Benefits",
-      description: "Save on medicines with exclusive discounts at partnered pharmacies nationwide",
-    },
-    {
-      icon: ClipboardCheck,
-      title: "Easy Verification",
-      description: "Quick verification with QR code or membership ID at any partner facility",
-    },
+      icon: <Clock className="w-8 h-8" />,
+      title: "Instant Activation",
+      description: "Get your digital membership card immediately after registration"
+    }
   ];
 
+  const plans = [
+    {
+      name: "Individual Plan",
+      price: 365,
+      duration: "per year",
+      popular: false,
+      features: [
+        "Single member coverage",
+        "Up to 25% savings",
+        "All partner facilities",
+        "Digital membership card",
+        "24/7 support"
+      ]
+    },
+    {
+      name: "Family Plan",
+      price: 365,
+      duration: "per year + add-ons",
+      popular: true,
+      features: [
+        "Multiple family members",
+        "10% discount on total",
+        "All individual benefits",
+        "Shared digital cards",
+        "Family management"
+      ]
+    }
+  ];
+
+  const calculateFamilyPrice = (members) => {
+    const basePrice = 365;
+    const total = basePrice * members;
+    const discount = members > 1 ? total * 0.10 : 0;
+    return total - discount;
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navbar provided by NavLayout for navbar routes */}
+    <div className="min-h-screen bg-white">
+      {/* Full Height Banner */}
+      <section className="min-h-screen relative flex items-center justify-center"
+               style={{
+                 backgroundImage: `url(${heroImage})`,
+                 backgroundSize: 'cover',
+                 backgroundPosition: 'center',
+                 backgroundRepeat: 'no-repeat'
+               }}>
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"></div>
+        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+          >
+            Affordable Healthcare
+            <br />
+            <span className="text-blue-300">For Every Indian Family</span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-xl sm:text-2xl mb-8 text-blue-100 max-w-2xl mx-auto leading-relaxed"
+          >
+            MCS Discount Cards - Saving you up to 25% on medical expenses through our trusted network of healthcare providers
+          </motion.p>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/10 to-background z-0" />
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                Affordable Healthcare for{" "}
-                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Everyone
-                </span>
-              </h1>
-              <p className="text-xl text-muted-foreground">
-                Subscribe once. Save forever. Access quality healthcare at discounted rates across our trusted
-                network of hospitals and clinics.
-              </p>
-              <div className="flex gap-4">
-                <Link to="/signup">
-                  <Button size="lg" className="text-lg px-8">
-                    Subscribe Now
-                  </Button>
-                </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="text-lg px-8"
-                  onClick={() => {
-                    const el = document.getElementById("pricing-section");
-                    if (el) {
-                      el.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                >
-                  View Plans
-                </Button>
-              </div>
-              <div className="flex gap-8 pt-4">
-                <div>
-                  <div className="text-3xl font-bold text-primary">100+</div>
-                  <div className="text-sm text-muted-foreground">Partner Hospitals</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-secondary">50K+</div>
-                  <div className="text-sm text-muted-foreground">Active Members</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-accent">25%</div>
-                  <div className="text-sm text-muted-foreground">Max Savings</div>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <img
-                src={heroImage}
-                alt="Healthcare professionals and happy patients"
-                className="rounded-2xl shadow-2xl"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why Choose HealthConnect?</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive healthcare benefits designed to keep you and your family healthy
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-2 hover:border-primary transition-all duration-300 hover:shadow-lg">
-                <CardHeader>
-                  <feature.icon className="h-12 w-12 text-primary mb-4" />
-                  <CardTitle>{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">{feature.description}</CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-  {/* Pricing Section */}
-  <section id="pricing-section" className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Choose Your Plan</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Flexible subscription plans to match your healthcare needs and budget
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
-            {plans.map((plan, index) => (
-              <Card
-                key={index}
-                className={`relative ${
-                  plan.popular
-                    ? "border-primary border-2 shadow-xl scale-105"
-                    : "border-2 hover:border-primary transition-all duration-300"
-                }`}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
+            <Link to="/how-it-works" className="w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full bg-white text-blue-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-3"
               >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-secondary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
-                    Most Popular
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <CardDescription>{plan.duration}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-5xl font-bold text-primary">₹{plan.price}</span>
-                  </div>
-                  <div className="text-lg font-semibold text-secondary">{plan.discount} Discount</div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter>
-                  <Link to="/signup" className="w-full">
-                    <Button className="w-full" variant={plan.popular ? "default" : "outline"} size="lg">
-                      Subscribe Now
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
+                Know How This Works
+                <ArrowRight className="w-5 h-5" />
+              </motion.button>
+            </Link>
+            
+            <Link to="/members-registration" className="w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-3 border-2 border-blue-600"
+              >
+                Become a Member
+                <Users className="w-5 h-5" />
+              </motion.button>
+            </Link>
+
+            <Link to="/doctors-registration" className="w-full sm:w-auto">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-blue-900 transition-colors flex items-center justify-center gap-3"
+              >
+                Become a Partner
+                <Stethoscope className="w-5 h-5" />
+              </motion.button>
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto"
+          >
+            <div className="text-center">
+              <div className="text-2xl font-bold">25%</div>
+              <div className="text-blue-200 text-sm">Max Savings</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">₹365</div>
+              <div className="text-blue-200 text-sm">Yearly Cost</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">1000+</div>
+              <div className="text-blue-200 text-sm">Partners</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">50K+</div>
+              <div className="text-blue-200 text-sm">Members</div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Why Choose MCS Section */}
+      <section className="py-16 bg-white px-4">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Why Choose MCS Discount Cards?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Experience healthcare savings like never before with our comprehensive benefits
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-4">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {feature.description}
+                </p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary to-secondary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">Ready to Start Saving on Healthcare?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Join thousands of satisfied members who are already enjoying quality healthcare at discounted rates
-          </p>
-          <Link to="/signup">
-            <Button size="lg" variant="secondary" className="text-lg px-8">
-              Get Started Today
-            </Button>
-          </Link>
+      {/* Available Plans Section */}
+      <section className="py-16 bg-gray-50 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              Choose Your Plan
+            </h2>
+            <p className="text-xl text-gray-600">
+              Flexible plans to suit your healthcare needs
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Individual Plan */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-200 flex flex-col h-full"
+            >
+              <div className="flex-grow">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Individual Plan</h3>
+                  <div className="text-4xl font-bold text-blue-600 mb-2">₹365</div>
+                  <div className="text-gray-600">{plans[0].duration}</div>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {plans[0].features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <Link to="/members-registration">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Get Individual Plan
+                </motion.button>
+              </Link>
+            </motion.div>
+
+            {/* Family Plan */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 text-white shadow-xl relative flex flex-col h-full"
+            >
+              {plans[1].popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="bg-yellow-400 text-blue-900 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                    <Crown className="w-4 h-4" />
+                    MOST POPULAR
+                  </div>
+                </div>
+              )}
+
+              <div className="flex-grow">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold mb-2">Family Plan</h3>
+
+                  <div className="bg-white/10 rounded-xl p-4 mb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-semibold">Family Members</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setFamilyMembers(Math.max(1, familyMembers - 1))}
+                          className="w-8 h-8 bg-white/20 rounded flex items-center justify-center hover:bg-white/30 transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="font-bold text-lg w-8 text-center">{familyMembers}</span>
+                        <button
+                          onClick={() => setFamilyMembers(familyMembers + 1)}
+                          className="w-8 h-8 bg-white/20 rounded flex items-center justify-center hover:bg-white/30 transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold">₹{calculateFamilyPrice(familyMembers)}</div>
+                    <div className="text-white/80 text-sm">total per year</div>
+                    {familyMembers > 1 && (
+                      <div className="text-green-300 text-sm mt-1">
+                        Save ₹{365 * familyMembers * 0.10} with family discount
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {plans[1].features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <Link to="/members-registration">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full bg-white text-blue-600 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  Get Family Plan
+                </motion.button>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Additional Sections */}
+      <section className="py-16 bg-white px-4">
+        <div className="container mx-auto max-w-6xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+              Ready to Start Your Healthcare Savings Journey?
+            </h2>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Join thousands of satisfied members who are already saving on their medical expenses
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/members-registration">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-colors"
+                >
+                  Get Started Now
+                </motion.button>
+              </Link>
+              <Link to="/contact">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-bold text-lg hover:border-blue-600 hover:text-blue-600 transition-colors"
+                >
+                  Contact Support
+                </motion.button>
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-card border-t py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
+      <footer className="bg-gray-900 text-white py-12 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Heart className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">HealthConnect</span>
+                <Heart className="h-6 w-6 text-blue-400" />
+                <span className="text-xl font-bold">MCS Cards</span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Making quality healthcare accessible and affordable for everyone
+              <p className="text-gray-400 text-sm">
+                Making healthcare affordable for every Indian family
               </p>
             </div>
+            
             <div>
-              <h3 className="font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Partner Network</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">How It Works</a></li>
+              <h3 className="font-semibold mb-4">For Members</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link to="/members-registration" className="hover:text-white transition-colors">Register</Link></li>
+                <li><Link to="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
+                <li><Link to="/membership-fee" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link to="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
               </ul>
             </div>
+            
             <div>
               <h3 className="font-semibold mb-4">For Partners</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/partner" className="hover:text-primary transition-colors">Partner Portal</Link></li>
-                <li><Link to="/partner/register" className="hover:text-primary transition-colors">Become a Partner</Link></li>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link to="/doctors-registration" className="hover:text-white transition-colors">Doctors</Link></li>
+                <li><Link to="/pharmacies-registration" className="hover:text-white transition-colors">Pharmacies</Link></li>
+                <li><Link to="/diagnostic-registration" className="hover:text-white transition-colors">Diagnostics</Link></li>
               </ul>
             </div>
+            
             <div>
               <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Contact Us</a></li>
-                <li><Link to="/admin" className="hover:text-primary transition-colors">Admin Portal</Link></li>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
+                <li><Link to="/login" className="hover:text-white transition-colors">Login</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 HealthConnect. All rights reserved.</p>
+          
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+            <p className="text-gray-400 text-sm">
+              &copy; 2025 MCS Discount Cards. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

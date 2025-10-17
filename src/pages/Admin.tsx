@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Users, Building2, CreditCard, TrendingUp, Calendar } from "lucide-react";
+import { Heart, Users, Building2, CreditCard, TrendingUp, Calendar, MessageCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import React from 'react';
@@ -14,8 +14,8 @@ const Admin = () => {
   const [stats, setStats] = React.useState([
     { label: "Total Members", value: "Loading...", change: "", icon: Users, color: "text-primary" },
     { label: "Active Partners", value: "Loading...", change: "", icon: Building2, color: "text-secondary" },
+    { label: "Pending Queries", value: "Loading...", change: "", icon: MessageCircle, color: "text-orange-500" },
     { label: "Monthly Revenue", value: "₹24.5L", change: "+18%", icon: CreditCard, color: "text-accent" },
-    { label: "Avg. Discount", value: "16.5%", change: "+2%", icon: TrendingUp, color: "text-orange-500" },
   ]);
 
   const [recentMembers, setRecentMembers] = React.useState([
@@ -27,6 +27,12 @@ const Admin = () => {
   ]);
 
   const [applications, setApplications] = React.useState<any[]>([]);
+  const [queries, setQueries] = React.useState<any[]>([]);
+  const [queryStats, setQueryStats] = React.useState({
+    totalQueries: 0,
+    pendingQueries: 0,
+    resolvedToday: 0
+  });
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(() => {
     try {
       const t = localStorage.getItem('token');
@@ -40,6 +46,8 @@ const Admin = () => {
   const [selectedApp, setSelectedApp] = React.useState<any | null>(null);
   const [appDialogOpen, setAppDialogOpen] = React.useState(false);
   const [viewerImage, setViewerImage] = React.useState<string | null>(null);
+  const [viewDialogOpen, setViewDialogOpen] = React.useState(false);
+  const [selectedQuery, setSelectedQuery] = React.useState<any>(null);
   const BACKEND_ORIGIN = (import.meta.env.VITE_BACKEND_URL as string) || `${window.location.protocol}//${window.location.hostname}:5000`;
   const assetUrl = (p?: string) => {
     if (!p) return '';
@@ -69,8 +77,8 @@ const Admin = () => {
       setStats([
         { label: "Total Members", value: data.totalUsers.toString(), change: "", icon: Users, color: "text-primary" },
         { label: "Active Partners", value: data.approvedPartners.toString(), change: "", icon: Building2, color: "text-secondary" },
+        { label: "Pending Queries", value: queryStats.pendingQueries.toString(), change: "", icon: MessageCircle, color: "text-orange-500" },
         { label: "Monthly Revenue", value: "₹24.5L", change: "+18%", icon: CreditCard, color: "text-accent" },
-        { label: "Avg. Discount", value: "16.5%", change: "+2%", icon: TrendingUp, color: "text-orange-500" },
       ]);
     } catch (err) {
       console.error(err);
@@ -101,11 +109,37 @@ const Admin = () => {
     }
   };
 
+  const loadQueries = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(apiUrl('api/contact/queries?limit=5'), { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      setQueries(data.queries);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const loadQueryStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(apiUrl('api/contact/stats'), { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      setQueryStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   React.useEffect(() => {
     loadApplications();
     loadStats();
     loadRecentMembers();
     loadRecentPartners();
+    loadQueries();
+    loadQueryStats();
   }, []);
 
   const approve = async (id: string) => {
@@ -125,10 +159,54 @@ const Admin = () => {
     } catch (err) { console.error(err); }
   };
 
+  const updateQueryStatus = async (id: string, status: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(apiUrl(`api/contact/queries/${id}/status`), {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) {
+        loadQueries();
+        loadQueryStats();
+        loadStats();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const deleteQuery = async (id: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(apiUrl(`api/contact/queries/${id}`), {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        loadQueries();
+        loadQueryStats();
+        loadStats();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const openAppDialog = (app:any) => { setSelectedApp(app); setAppDialogOpen(true); };
   const closeAppDialog = () => { setSelectedApp(null); setAppDialogOpen(false); };
   const openViewer = (src:string) => setViewerImage(src);
   const closeViewer = () => setViewerImage(null);
+  const viewQuery = (query: any) => {
+    setSelectedQuery(query);
+    setViewDialogOpen(true);
+  };
 
   // Redirect to login if not authenticated
   React.useEffect(() => {
@@ -283,6 +361,49 @@ const Admin = () => {
                     </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Queries */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Recent Queries</CardTitle>
+                <CardDescription>Latest user support requests</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {queries.length === 0 && <div className="text-sm text-muted-foreground">No recent queries</div>}
+                  {queries.map((query) => (
+                    <div key={query._id} className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-start">
+                        <div className="w-3/4">
+                          <div className="font-semibold text-lg">{query.subject}</div>
+                          <div className="text-sm text-muted-foreground">From: {query.name} ({query.email}) • {query.userType}</div>
+                          <div className="text-sm mt-2 line-clamp-2">{query.message}</div>
+                          <div className="text-sm text-muted-foreground mt-2">
+                            {new Date(query.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2 items-end">
+                          <Badge variant={query.status === 'pending' ? 'destructive' : query.status === 'resolved' ? 'default' : 'secondary'}>
+                            {query.status}
+                          </Badge>
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => viewQuery(query)}>
+                              View
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => deleteQuery(query._id)}>
+                              Solved
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Button variant="outline" className="w-full mt-4">
+                  View All Queries
+                </Button>
               </CardContent>
             </Card>
 
@@ -448,6 +569,46 @@ const Admin = () => {
           <DialogFooter>
             <Button className="w-full" onClick={() => setViewerImage(null)}>Close</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Query view dialog */}
+      <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+        <DialogContent className="max-w-2xl w-full">
+          <DialogHeader>
+            <DialogTitle>Query Details</DialogTitle>
+            <DialogDescription>Full details of the user query</DialogDescription>
+          </DialogHeader>
+          {selectedQuery && (
+            <div className="space-y-4 mt-2">
+              <div>
+                <h3 className="font-semibold">Subject</h3>
+                <div className="text-sm">{selectedQuery.subject}</div>
+              </div>
+              <div>
+                <h3 className="font-semibold">Message</h3>
+                <div className="text-sm whitespace-pre-line">{selectedQuery.message}</div>
+              </div>
+              <div>
+                <h3 className="font-semibold">User Details</h3>
+                <div className="text-sm">
+                  {selectedQuery.name} • {selectedQuery.email} • {selectedQuery.phone}
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold">Status</h3>
+                <Badge variant={selectedQuery.status === 'pending' ? 'destructive' : selectedQuery.status === 'resolved' ? 'default' : 'secondary'}>
+                  {selectedQuery.status}
+                </Badge>
+              </div>
+              <div className="flex gap-2 justify-end mt-4">
+                <Button variant="ghost" onClick={() => { setViewDialogOpen(false); setSelectedQuery(null); }}>Close</Button>
+                <Button variant="ghost" onClick={() => { deleteQuery(selectedQuery._id); setViewDialogOpen(false); setSelectedQuery(null); }}>
+                  Solved
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

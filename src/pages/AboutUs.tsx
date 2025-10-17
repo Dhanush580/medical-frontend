@@ -1,12 +1,264 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Heart, Shield, Users, Award, ArrowRight } from "lucide-react";
 
 const AboutUs = () => {
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
+
+  const staggerContainer = {
+    animate: {
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const features = [
+    {
+      icon: <Heart className="w-8 h-8" />,
+      title: "Healthcare Savings",
+      description: "Save up to 25% on medical bills, pharmacy purchases, and diagnostic tests through our extensive network."
+    },
+    {
+      icon: <Shield className="w-8 h-8" />,
+      title: "Trusted Network",
+      description: "Verified doctors, pharmacies, and diagnostic centers ensuring quality healthcare services across India."
+    },
+    {
+      icon: <Users className="w-8 h-8" />,
+      title: "Family Coverage",
+      description: "Extend your benefits to family members with our flexible family membership plans."
+    },
+    {
+      icon: <Award className="w-8 h-8" />,
+      title: "Annual Membership",
+      description: "Comprehensive coverage for just ₹365/year - less than ₹1 per day for quality healthcare access."
+    }
+  ];
+
+  const stats = [
+    { number: "25%", label: "Average Savings" },
+    { number: "365", label: "Days Coverage" },
+    { number: "1000+", label: "Verified Partners" },
+    { number: "24/7", label: "Support" }
+  ];
+
   return (
-    <div className="min-h-screen bg-background py-20">
-      <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-4">About Us</h1>
-        <p className="text-lg text-muted-foreground">HealthConnect connects you to a trusted network of hospitals and clinics to make healthcare more affordable and accessible.</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-20">
+      {/* Hero Section */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="container mx-auto px-4 mb-20"
+      >
+        <div className="text-center max-w-4xl mx-auto">
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
+          >
+            Making Healthcare{" "}
+            <span className="text-blue-600 relative">
+              Affordable
+              <motion.div
+                className="absolute -bottom-2 left-0 w-full h-1 bg-blue-600"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              />
+            </span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-xl text-gray-600 mb-8 leading-relaxed"
+          >
+            MCS Discount Cards is revolutionizing healthcare accessibility by connecting members 
+            with trusted medical professionals, pharmacies, and diagnostic centers across India, 
+            ensuring significant savings on healthcare expenses.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <Link to="/membership">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold flex items-center gap-2 hover:bg-blue-700 transition-colors"
+              >
+                Get Your Card Now
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            </Link>
+            <Link to="/how-it-works">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-semibold hover:border-blue-600 hover:text-blue-600 transition-colors"
+              >
+                How It Works
+              </motion.button>
+            </Link>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Stats Section */}
+      <motion.section 
+        variants={staggerContainer}
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        className="container mx-auto px-4 mb-20"
+      >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              variants={fadeInUp}
+              className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="text-3xl font-bold text-blue-600 mb-2"
+              >
+                {stat.number}
+              </motion.div>
+              <div className="text-gray-600 font-medium">{stat.label}</div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* Features Section */}
+      <motion.section 
+        variants={staggerContainer}
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        className="container mx-auto px-4 mb-20"
+      >
+        <motion.div
+          variants={fadeInUp}
+          className="text-center max-w-2xl mx-auto mb-16"
+        >
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Why Choose MCS?
+          </h2>
+          <p className="text-lg text-gray-600">
+            We're committed to making quality healthcare accessible and affordable for every Indian family
+          </p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              variants={fadeInUp}
+              whileHover={{ y: -10 }}
+              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 group"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors"
+              >
+                {feature.icon}
+              </motion.div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {feature.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* Mission Section */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="container mx-auto px-4 mb-20"
+      >
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white rounded-3xl p-12 shadow-2xl"
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              Our Mission
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed mb-8">
+              To democratize healthcare access by creating a sustainable ecosystem where members 
+              save significantly on medical expenses while healthcare providers expand their reach 
+              to genuine patients. We believe that quality healthcare should be a right, not a privilege.
+            </p>
+            <div className="w-24 h-1 bg-blue-600 mx-auto rounded-full"></div>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* CTA Section */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="container mx-auto px-4"
+      >
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-3xl p-12 text-center text-white">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl font-bold mb-4"
+          >
+            Ready to Start Saving?
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-xl mb-8 opacity-90"
+          >
+            Join thousands of members who are already saving on their healthcare expenses
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <Link to="/membership">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+              >
+                Get Started - ₹365/Year
+              </motion.button>
+            </Link>
+          </motion.div>
+        </div>
+      </motion.section>
     </div>
   );
 };
