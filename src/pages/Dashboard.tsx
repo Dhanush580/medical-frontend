@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, Calendar, MapPin, Phone, Mail, Search, Filter } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Heart, Calendar, MapPin, Phone, Mail, Search, Filter, User, Shield, History, Home } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import indiaDistricts from "@/lib/indiaDistricts";
 import { apiUrl } from "@/lib/api";
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const [districtSuggestions, setDistrictSuggestions] = React.useState<string[]>([]);
   const [showStateSuggestions, setShowStateSuggestions] = React.useState(false);
   const [showDistrictSuggestions, setShowDistrictSuggestions] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState('partners');
 
   React.useEffect(() => {
     const loadUser = async () => {
@@ -33,7 +35,6 @@ const Dashboard = () => {
         if (res.ok) {
           const u = await res.json();
           setUser(u);
-          // Load visits after user is loaded
           loadVisits();
         }
       } catch (err) {
@@ -62,7 +63,7 @@ const Dashboard = () => {
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchPartners();
-    }, 300); // Debounce for 300ms
+    }, 300);
 
     return () => clearTimeout(timeoutId);
   }, [query, selectedState, selectedDistrict, selectedType]);
@@ -70,22 +71,16 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Remove auth token and clear user state
     localStorage.removeItem('token');
     setUser(null);
-    // Replace history so back doesn't go to protected page
     navigate('/login', { replace: true });
-
-    // Push a dummy state and listen for popstate to prevent navigating back
     window.history.pushState(null, '', '/login');
     const onBack = () => {
-      // If no token, always redirect to login
       if (!localStorage.getItem('token')) {
         navigate('/login', { replace: true });
       }
     };
     window.addEventListener('popstate', onBack);
-    // Remove listener after a short timeout to avoid leaking if user stays
     setTimeout(() => window.removeEventListener('popstate', onBack), 5000);
   };
 
@@ -95,19 +90,19 @@ const Dashboard = () => {
 
   const handleStateChange = (state: string) => {
     setSelectedState(state);
-    setSelectedDistrict(''); // Reset district when state changes
-    setDistrictSuggestions([]); // Clear district suggestions
+    setSelectedDistrict('');
+    setDistrictSuggestions([]);
   };
 
   const handleStateInputChange = (value: string) => {
     setSelectedState(value);
-    setSelectedDistrict(''); // Reset district when state changes
-    setDistrictSuggestions([]); // Clear district suggestions
+    setSelectedDistrict('');
+    setDistrictSuggestions([]);
 
     if (value.trim()) {
       const filtered = Object.keys(indiaDistricts)
         .filter(state => state.toLowerCase().includes(value.toLowerCase()))
-        .slice(0, 10); // Limit to 10 suggestions
+        .slice(0, 10);
       setStateSuggestions(filtered);
       setShowStateSuggestions(true);
     } else {
@@ -123,7 +118,7 @@ const Dashboard = () => {
       const districts = getDistrictsForState(selectedState);
       const filtered = districts
         .filter(district => district.toLowerCase().includes(value.toLowerCase()))
-        .slice(0, 10); // Limit to 10 suggestions
+        .slice(0, 10);
       setDistrictSuggestions(filtered);
       setShowDistrictSuggestions(true);
     } else {
@@ -136,15 +131,15 @@ const Dashboard = () => {
     setSelectedState(state);
     setStateSuggestions([]);
     setShowStateSuggestions(false);
-    setSelectedDistrict(''); // Reset district when state changes
-    searchPartners(); // Trigger search immediately
+    setSelectedDistrict('');
+    searchPartners();
   };
 
   const selectDistrictSuggestion = (district: string) => {
     setSelectedDistrict(district);
     setDistrictSuggestions([]);
     setShowDistrictSuggestions(false);
-    searchPartners(); // Trigger search immediately
+    searchPartners();
   };
 
   const searchPartners = async () => {
@@ -173,161 +168,143 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
       {/* Navigation */}
-      <nav className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+      <nav className="border-b bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          <Link to="/" className="flex items-center gap-2 transition-transform hover:scale-105">
+            <Heart className="h-7 w-7 text-primary" />
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
               HealthConnect
             </span>
           </Link>
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-muted-foreground">Welcome, {user?.name ?? 'Guest'}</span>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
+          <div className="flex gap-3 items-center">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full">
+              <User className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">{user?.name ?? 'Guest'}</span>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleLogout}
+              className="hover:bg-red-50 hover:text-red-600 transition-colors"
+            >
               Logout
             </Button>
           </div>
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Dashboard</h1>
-          <p className="text-muted-foreground">Manage your healthcare membership</p>
+      <div className="container mx-auto px-4 py-6">
+        {/* Welcome Section */}
+        <div className="mb-8 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-3">
+            <Home className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-primary">Dashboard</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            Welcome back, {user?.name ?? 'Guest'}! 👋
+          </h1>
+          <p className="text-muted-foreground max-w-2xl">
+            Manage your healthcare membership and find trusted medical partners in one place.
+          </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Top: show user subscription status */}
-          <div className="lg:col-span-2">
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Subscription</CardTitle>
-                <CardDescription>Membership details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {user ? (<>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <div className="text-sm opacity-80 mb-1">Plan</div>
-                      <div className="text-xl font-semibold">{user.plan || 'Annual'}</div>
-                      {user?.familyMembers > 0 && (
-                        <div className="text-sm text-muted-foreground">Includes {user.familyMembers} family member(s)</div>
-                      )}
-                    </div>
-                    <div>
-                      <div className="text-sm opacity-80 mb-1">Status</div>
-                      <div className="text-xl font-semibold">{user.status}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm opacity-80 mb-1">Valid Until</div>
-                      <div className="text-lg">{user.validUntil ? new Date(user.validUntil).toLocaleDateString() : '—'}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm opacity-80 mb-1">Member ID</div>
-                      <div className="text-lg">{user.membershipId}</div>
-                    </div>
+        {/* Main Content with Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 p-1 bg-muted/50 rounded-xl h-auto">
+            <TabsTrigger 
+              value="partners" 
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg transition-all"
+            >
+              <Search className="h-4 w-4" />
+              <span className="hidden sm:inline">Find Partners</span>
+              <span className="sm:hidden">Partners</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="subscription" 
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg transition-all"
+            >
+              <Shield className="h-4 w-4" />
+              <span className="hidden sm:inline">My Subscription</span>
+              <span className="sm:hidden">Subscription</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="visits" 
+              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg transition-all"
+            >
+              <History className="h-4 w-4" />
+              <span className="hidden sm:inline">Recent Visits</span>
+              <span className="sm:hidden">Visits</span>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Partners Tab */}
+          <TabsContent value="partners" className="space-y-6 animate-in fade-in-50">
+            <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-blue-50 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Search className="h-6 w-6 text-primary" />
                   </div>
-
-                  {/* Family members list */}
-                  {user?.familyMembers > 0 && Array.isArray(user?.familyDetails) && (
-                    <div className="mt-4">
-                      <h4 className="font-semibold mb-2">Family Members</h4>
-                      <div className="space-y-3">
-                        {user.familyDetails.map((m: any, idx: number) => (
-                          <div key={idx} className="p-3 border rounded-lg flex items-center justify-between bg-card/30">
-                            <div>
-                              <div className="font-semibold">{m?.name || '—'}</div>
-                              <div className="text-sm text-muted-foreground">Age: {m?.age ?? '—'} • {m?.gender || '—'}</div>
-                            </div>
-                            <div className="text-sm text-muted-foreground">{m?.relationship || '—'}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Contact details (moved into Subscription) */}
-                  {user?.email || user?.phone ? (
-                    <div className="mt-4">
-                      <h4 className="font-semibold mb-2">Contact</h4>
-                      <div className="grid md:grid-cols-2 gap-3">
-                        <div className="p-3 border rounded-lg bg-card/30">
-                          <div className="text-sm text-muted-foreground">Email</div>
-                          <div className="font-medium">{user?.email || '—'}</div>
-                        </div>
-                        <div className="p-3 border rounded-lg bg-card/30">
-                          <div className="text-sm text-muted-foreground">Phone</div>
-                          <div className="font-medium">{user?.phone || '—'}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : null}
-                </>
-                ) : (
-                  <div>Please login to see membership details.</div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Partner search */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Search className="h-5 w-5" />
-                  Find Healthcare Partners
-                </CardTitle>
-                <CardDescription>Search and filter hospitals, doctors, pharmacies, and diagnostic centers</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Search Input */}
                   <div>
-                    <Label htmlFor="search" className="text-sm font-medium mb-2 block">Search</Label>
-                    <Input
-                      id="search"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search by name, type, or address..."
-                      className="w-full"
-                      onKeyPress={(e) => e.key === 'Enter' && searchPartners()}
-                    />
+                    <CardTitle className="text-2xl">Find Healthcare Partners</CardTitle>
+                    <CardDescription className="text-base">
+                      Search hospitals, doctors, pharmacies, and diagnostic centers
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-6">
+                  {/* Search Input */}
+                  <div className="relative">
+                    <Label htmlFor="search" className="text-sm font-medium mb-3 block">Search Partners</Label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="search"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search by name, specialty, or address..."
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border-muted-foreground/20 focus:border-primary transition-colors"
+                      />
+                    </div>
                   </div>
 
-                  {/* Filters Row */}
+                  {/* Filters Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="relative">
-                      <Label htmlFor="type" className="text-sm font-medium mb-2 block">Type</Label>
+                    <div className="space-y-3">
+                      <Label htmlFor="type" className="text-sm font-medium">Service Type</Label>
                       <Select value={selectedType} onValueChange={setSelectedType}>
-                        <SelectTrigger>
+                        <SelectTrigger className="rounded-xl border-muted-foreground/20 focus:border-primary transition-colors">
                           <SelectValue placeholder="All Types" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All Types</SelectItem>
-                          <SelectItem value="doctor">Doctor</SelectItem>
-                          <SelectItem value="diagnostic">Diagnostic Center</SelectItem>
-                          <SelectItem value="pharmacy">Pharmacy</SelectItem>
+                          <SelectItem value="all">All Healthcare Services</SelectItem>
+                          <SelectItem value="doctor">Doctors & Clinics</SelectItem>
+                          <SelectItem value="diagnostic">Diagnostic Centers</SelectItem>
+                          <SelectItem value="pharmacy">Pharmacies</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
-                    <div className="relative">
-                      <Label htmlFor="state" className="text-sm font-medium mb-2 block">State</Label>
+                    <div className="space-y-3 relative">
+                      <Label htmlFor="state" className="text-sm font-medium">State</Label>
                       <Input
                         id="state"
                         value={selectedState}
                         onChange={(e) => handleStateInputChange(e.target.value)}
                         onFocus={() => stateSuggestions.length > 0 && setShowStateSuggestions(true)}
                         placeholder="Type state name..."
-                        className="w-full"
+                        className="rounded-xl border-muted-foreground/20 focus:border-primary transition-colors"
                       />
                       {showStateSuggestions && stateSuggestions.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-xl shadow-lg max-h-48 overflow-y-auto">
                           {stateSuggestions.map((state) => (
                             <div
                               key={state}
-                              className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                              className="px-4 py-3 hover:bg-muted/50 cursor-pointer text-sm border-b border-border/50 last:border-b-0 transition-colors"
                               onClick={() => selectStateSuggestion(state)}
                             >
                               {state}
@@ -337,23 +314,23 @@ const Dashboard = () => {
                       )}
                     </div>
 
-                    <div className="relative">
-                      <Label htmlFor="district" className="text-sm font-medium mb-2 block">District</Label>
+                    <div className="space-y-3 relative">
+                      <Label htmlFor="district" className="text-sm font-medium">District</Label>
                       <Input
                         id="district"
                         value={selectedDistrict}
                         onChange={(e) => handleDistrictInputChange(e.target.value)}
                         onFocus={() => districtSuggestions.length > 0 && setShowDistrictSuggestions(true)}
                         placeholder="Type district name..."
-                        className="w-full"
+                        className="rounded-xl border-muted-foreground/20 focus:border-primary transition-colors disabled:opacity-50"
                         disabled={!selectedState}
                       />
                       {showDistrictSuggestions && districtSuggestions.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                        <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-xl shadow-lg max-h-48 overflow-y-auto">
                           {districtSuggestions.map((district) => (
                             <div
                               key={district}
-                              className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                              className="px-4 py-3 hover:bg-muted/50 cursor-pointer text-sm border-b border-border/50 last:border-b-0 transition-colors"
                               onClick={() => selectDistrictSuggestion(district)}
                             >
                               {district}
@@ -365,164 +342,296 @@ const Dashboard = () => {
                   </div>
 
                   {/* Results */}
-                  {partners.length > 0 && (
+                  {loading && (
+                    <div className="flex justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  )}
+
+                  {partners.length > 0 && !loading && (
                     <div className="mt-6">
-                      <h4 className="font-medium mb-3">Found {partners.length} partner{partners.length !== 1 ? 's' : ''}</h4>
-                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="font-semibold text-lg">
+                          Found {partners.length} partner{partners.length !== 1 ? 's' : ''}
+                        </h4>
+                        <Badge variant="secondary" className="bg-primary/10 text-primary">
+                          {selectedType === 'all' ? 'All Types' : selectedType}
+                        </Badge>
+                      </div>
+                      <div className="grid gap-4 max-h-96 overflow-y-auto pr-2">
                         {partners.map((p, idx) => (
-                          <div key={idx} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <h5 className="font-semibold text-lg">{p.name}</h5>
-                                  <Badge variant="outline" className="capitalize">
-                                    {p.type}
-                                  </Badge>
-                                </div>
-                                <p className="text-sm text-muted-foreground mb-2">{p.address}</p>
-                                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                  {p.contactPhone && (
-                                    <div className="flex items-center gap-1">
-                                      <Phone className="h-3 w-3" />
-                                      {p.contactPhone}
-                                    </div>
-                                  )}
-                                  {p.state && p.district && (
-                                    <div className="flex items-center gap-1">
-                                      <MapPin className="h-3 w-3" />
-                                      {p.district}, {p.state}
-                                    </div>
-                                  )}
+                          <Card 
+                            key={idx} 
+                            className="border-muted-foreground/20 hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-pointer rounded-xl"
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1 space-y-3">
+                                  <div className="flex items-center gap-3">
+                                    <h5 className="font-semibold text-lg">{p.name}</h5>
+                                    <Badge variant="outline" className="capitalize bg-blue-50 text-blue-700 border-blue-200">
+                                      {p.type}
+                                    </Badge>
+                                  </div>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">{p.address}</p>
+                                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                                    {p.contactPhone && (
+                                      <div className="flex items-center gap-2">
+                                        <Phone className="h-4 w-4" />
+                                        <span>{p.contactPhone}</span>
+                                      </div>
+                                    )}
+                                    {p.state && p.district && (
+                                      <div className="flex items-center gap-2">
+                                        <MapPin className="h-4 w-4" />
+                                        <span>{p.district}, {p.state}</span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </div>
+                            </CardContent>
+                          </Card>
                         ))}
                       </div>
                     </div>
                   )}
 
                   {partners.length === 0 && !loading && (query || selectedType !== 'all' || selectedState || selectedDistrict) && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No partners found matching your criteria.</p>
-                      <p className="text-sm">Try adjusting your search or filters.</p>
+                    <div className="text-center py-12 text-muted-foreground">
+                      <Search className="h-16 w-16 mx-auto mb-4 opacity-40" />
+                      <p className="text-lg font-medium mb-2">No partners found</p>
+                      <p className="text-sm">Try adjusting your search criteria or filters</p>
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-          {/* Membership Card */}
-          <div>
-            {user ? (
-              <Card className="bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-xl">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
+          {/* Subscription Tab */}
+          <TabsContent value="subscription" className="animate-in fade-in-50">
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Subscription Details */}
+              <Card className="border-0 shadow-lg rounded-2xl">
+                <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <Shield className="h-6 w-6 text-green-600" />
+                    </div>
                     <div>
-                      <CardTitle className="text-2xl mb-1">{user?.name}</CardTitle>
-                      <CardDescription className="text-primary-foreground/80">
-                        Member ID: {user?.membershipId}
+                      <CardTitle className="text-2xl">Subscription Details</CardTitle>
+                      <CardDescription className="text-base">
+                        Your membership information and benefits
                       </CardDescription>
                     </div>
-                    <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                      {user?.status}
-                    </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <div className="text-sm opacity-80 mb-1">Plan</div>
-                      <div className="text-xl font-semibold">{user?.plan}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm opacity-80 mb-1">Discount</div>
-                      <div className="text-xl font-semibold">{user?.familyMembers && user.familyMembers > 0 ? '10%' : '0%'}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm opacity-80 mb-1">Valid Until</div>
-                      <div className="text-lg">{user?.validUntil ? new Date(user.validUntil).toLocaleDateString() : '—'}</div>
-                    </div>
-                    {/* digital card info removed (scanner removed per request) */}
-                  </div>
-
-                  <div className="pt-4 border-t border-white/20">
-                    <Button variant="secondary" className="w-full md:w-auto bg-white/20 hover:bg-white/30 text-white border-white/30">
-                      Download Digital Card
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Not logged in</CardTitle>
-                </CardHeader>
-                <CardContent>Please login to view your membership card and recent visits.</CardContent>
-              </Card>
-            )}
-          </div>
-
-            {/* Recent Visits */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Recent Visits</CardTitle>
-                <CardDescription>Your recent healthcare facility visits</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentVisits.length > 0 ? (
-                    recentVisits.map((visit, idx) => (
-                      <div key={visit.id || idx} className="flex items-start justify-between p-4 border rounded-lg">
-                        <div className="flex gap-4">
-                          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <MapPin className="h-6 w-6 text-primary" />
-                          </div>
-                          <div>
-                            <div className="font-semibold">{visit.facility}</div>
-                            <div className="text-sm text-muted-foreground">{visit.service}</div>
-                            <div className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
-                              <Calendar className="h-3 w-3" />
-                              {visit.date}
-                            </div>
+                <CardContent className="pt-6 space-y-6">
+                  {user ? (
+                    <>
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium text-muted-foreground">Plan Type</div>
+                          <div className="text-xl font-semibold">{user.plan || 'Annual'}</div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium text-muted-foreground">Status</div>
+                          <Badge 
+                            variant="outline" 
+                            className={`text-sm ${
+                              user.status === 'Active' 
+                                ? 'bg-green-50 text-green-700 border-green-200' 
+                                : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                            }`}
+                          >
+                            {user.status}
+                          </Badge>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium text-muted-foreground">Valid Until</div>
+                          <div className="text-lg font-medium">
+                            {user.validUntil ? new Date(user.validUntil).toLocaleDateString() : '—'}
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">Saved</div>
-                          <div className="font-semibold text-accent">{visit.discount}</div>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium text-muted-foreground">Member ID</div>
+                          <div className="text-lg font-mono font-medium bg-muted/30 px-2 py-1 rounded">
+                            {user.membershipId}
+                          </div>
                         </div>
                       </div>
-                    ))
+
+                      {/* Contact Information */}
+                      <div className="pt-4 border-t">
+                        <h4 className="font-semibold text-lg mb-3">Contact Information</h4>
+                        <div className="grid sm:grid-cols-2 gap-3">
+                          <div className="p-3 border rounded-xl bg-muted/20 space-y-1">
+                            <div className="text-sm text-muted-foreground flex items-center gap-2">
+                              <Mail className="h-4 w-4" />
+                              Email
+                            </div>
+                            <div className="font-medium">{user?.email || '—'}</div>
+                          </div>
+                          <div className="p-3 border rounded-xl bg-muted/20 space-y-1">
+                            <div className="text-sm text-muted-foreground flex items-center gap-2">
+                              <Phone className="h-4 w-4" />
+                              Phone
+                            </div>
+                            <div className="font-medium">{user?.phone || '—'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No visits recorded yet</p>
-                      <p className="text-sm">Your healthcare visits will appear here</p>
+                      Please login to view subscription details
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Savings Summary */}
-            <Card className="bg-gradient-to-br from-accent/10 to-accent/5">
-              <CardHeader>
-                <CardTitle>Total Savings</CardTitle>
-                <CardDescription>Since joining HealthConnect</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-4xl font-bold text-accent mb-2">₹3,450</div>
-                <div className="text-sm text-muted-foreground">
-                  You've saved more than your subscription cost!
+              {/* Family Members & Digital Card */}
+              <div className="space-y-6">
+                {/* Family Members */}
+                {user?.familyMembers > 0 && Array.isArray(user?.familyDetails) && (
+                  <Card className="border-0 shadow-lg rounded-2xl">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <User className="h-5 w-5" />
+                        Family Members ({user.familyMembers})
+                      </CardTitle>
+                      <CardDescription>
+                        Family members covered under your plan
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {user.familyDetails.map((m: any, idx: number) => (
+                          <div 
+                            key={idx} 
+                            className="p-4 border rounded-xl hover:bg-muted/20 transition-colors flex items-center justify-between"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                <User className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <div className="font-semibold">{m?.name || '—'}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  Age: {m?.age ?? '—'} • {m?.gender || '—'}
+                                </div>
+                              </div>
+                            </div>
+                            <Badge variant="secondary" className="bg-blue-50 text-blue-700">
+                              {m?.relationship || '—'}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Digital Card */}
+                {user && (
+                  <Card className="border-0 shadow-lg rounded-2xl bg-gradient-to-br from-primary to-blue-600 text-white">
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-2xl mb-1">{user?.name}</CardTitle>
+                          <CardDescription className="text-white/80">
+                            Member ID: {user?.membershipId}
+                          </CardDescription>
+                        </div>
+                        <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+                          {user?.status}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <div className="text-sm opacity-80">Plan</div>
+                          <div className="text-xl font-semibold">{user?.plan}</div>
+                        </div>
+                        <div>
+                          <div className="text-sm opacity-80">Family Discount</div>
+                          <div className="text-xl font-semibold">
+                            {user?.familyMembers && user.familyMembers > 0 ? '10%' : '0%'}
+                          </div>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="secondary" 
+                        className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 transition-all"
+                      >
+                        Download Digital Card
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Recent Visits Tab */}
+          <TabsContent value="visits" className="animate-in fade-in-50">
+            <Card className="border-0 shadow-lg rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-50 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <History className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl">Recent Visits</CardTitle>
+                    <CardDescription className="text-base">
+                      Your recent healthcare facility visits and savings
+                    </CardDescription>
+                  </div>
                 </div>
+              </CardHeader>
+              <CardContent className="pt-6">
+                {recentVisits.length > 0 ? (
+                  <div className="space-y-4">
+                    {recentVisits.map((visit, idx) => (
+                      <div 
+                        key={visit.id || idx} 
+                        className="p-4 border rounded-xl hover:shadow-md transition-all duration-200 bg-white"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex gap-4 items-start">
+                            <div className="h-12 w-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                              <MapPin className="h-6 w-6 text-purple-600" />
+                            </div>
+                            <div>
+                              <div className="font-semibold text-lg mb-1">{visit.facility}</div>
+                              <div className="text-muted-foreground mb-2">{visit.service}</div>
+                              <div className="text-sm text-muted-foreground flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                {visit.date}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm text-muted-foreground">You Saved</div>
+                            <div className="font-bold text-lg text-green-600">{visit.discount}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Calendar className="h-16 w-16 mx-auto mb-4 opacity-40" />
+                    <p className="text-lg font-medium mb-2">No visits recorded yet</p>
+                    <p className="text-sm">Your healthcare visits will appear here once you start using our services</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
