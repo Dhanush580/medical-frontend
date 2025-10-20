@@ -468,7 +468,7 @@ const ContactUs = () => {
           <div className="grid md:grid-cols-3 gap-6">
             <motion.a
               whileHover={{ scale: 1.05 }}
-              href="/members-registration"
+              href="/signup"
               className="bg-blue-50 p-6 rounded-2xl text-center hover:bg-blue-100 transition-colors group"
             >
               <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-4 group-hover:bg-blue-200 transition-colors">

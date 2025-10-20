@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiUrl } from "@/lib/api";
+import Navbar from "@/components/Navbar";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -46,7 +47,9 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <>
+      <Navbar />
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Admin Login</CardTitle>
@@ -98,6 +101,7 @@ const AdminLogin = () => {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 };
 
