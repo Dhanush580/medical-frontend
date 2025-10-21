@@ -705,85 +705,232 @@ const Admin = () => {
             <DialogDescription>Review all details before making a decision</DialogDescription>
           </DialogHeader>
           {selectedApp && (
-            <div className="max-h-[60vh] overflow-y-auto pr-2 space-y-6 mt-2">
-              {/* Application details content (same as before) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Name</h3>
-                  <div className="text-base">{selectedApp.name}</div>
+            <div className="max-h-[60vh] overflow-y-auto pr-2 space-y-8 mt-2">
+              {/* Personal Details Section */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-blue-600 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-900">Personal Details</h3>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Type</h3>
-                  <div className="text-base">{selectedApp.type}</div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Full Name</h4>
+                    <div className="text-base">{selectedApp.responsible?.name || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Age</h4>
+                    <div className="text-base">{selectedApp.responsible?.age || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Sex</h4>
+                    <div className="text-base">{selectedApp.responsible?.sex || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Date of Birth</h4>
+                    <div className="text-base">{selectedApp.responsible?.dob || 'Not specified'}</div>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Contact Email</h3>
-                  <div className="text-base">{selectedApp.contactEmail}</div>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Contact Phone</h3>
-                  <div className="text-base">{selectedApp.contactPhone}</div>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Address</h3>
-                  <div className="text-base">{selectedApp.address}</div>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">State</h3>
-                  <div className="text-base">{selectedApp.state}</div>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">District</h3>
-                  <div className="text-base">{selectedApp.district}</div>
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm text-muted-foreground">Pincode</h3>
-                  <div className="text-base">{selectedApp.pincode}</div>
-                </div>
-              </div>
+              </section>
 
-              {/* Document previews (same as before) */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2">Passport Photo</h3>
-                  {selectedApp.passportPhoto ? (
-                    <img 
-                      src={assetUrl(selectedApp.passportPhoto)} 
-                      alt="passport" 
-                      className="h-32 w-32 object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
-                      onClick={() => openViewer(assetUrl(selectedApp.passportPhoto))}
-                    />
-                  ) : (
-                    <div className="text-sm text-muted-foreground">No passport image uploaded</div>
+              {/* Business Details Section */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-green-600 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-900">Business Details</h3>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">
+                      {selectedApp.type === 'doctor' ? 'Clinic Name' : 'Center/Business Name'}
+                    </h4>
+                    <div className="text-base">{selectedApp.name || 'Not specified'}</div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Address</h4>
+                    <div className="text-base">{selectedApp.address || 'Not specified'}</div>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-sm text-muted-foreground">State</h4>
+                      <div className="text-base">{selectedApp.state || 'Not specified'}</div>
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-sm text-muted-foreground">District</h4>
+                      <div className="text-base">{selectedApp.district || 'Not specified'}</div>
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-sm text-muted-foreground">Pincode</h4>
+                      <div className="text-base">{selectedApp.pincode || 'Not specified'}</div>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-sm text-muted-foreground">Available Timings</h4>
+                      <div className="text-base">
+                        {selectedApp.timeFrom && selectedApp.timeTo ? `${selectedApp.timeFrom} - ${selectedApp.timeTo}` : 'Not specified'}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-sm text-muted-foreground">Available Days</h4>
+                      <div className="text-base">
+                        {selectedApp.dayFrom && selectedApp.dayTo ? `${selectedApp.dayFrom} - ${selectedApp.dayTo}` : 'Not specified'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Website</h4>
+                    <div className="text-base">
+                      {selectedApp.website ? (
+                        <a href={selectedApp.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                          {selectedApp.website}
+                        </a>
+                      ) : 'Not specified'}
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Contact & Login Information Section */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-purple-600 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-900">Contact & Login Information</h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Contact Email</h4>
+                    <div className="text-base">{selectedApp.contactEmail || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Contact Phone</h4>
+                    <div className="text-base">{selectedApp.contactPhone || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Login Email</h4>
+                    <div className="text-base">{selectedApp.email || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Partner Type</h4>
+                    <div className="text-base capitalize">{selectedApp.type || 'Not specified'}</div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Registration Details Section */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-orange-600 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-900">Registration Details</h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Council Name</h4>
+                    <div className="text-base">{selectedApp.council?.name || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Council Number</h4>
+                    <div className="text-base">{selectedApp.council?.number || 'Not specified'}</div>
+                  </div>
+                  {(selectedApp.type === 'doctor' || selectedApp.type === 'dentist') && (
+                    <div className="space-y-1 md:col-span-2">
+                      <h4 className="font-semibold text-sm text-muted-foreground">Specialization</h4>
+                      <div className="text-base">{selectedApp.specialization || 'Not specified'}</div>
+                    </div>
                   )}
                 </div>
+              </section>
 
-                <div>
-                  <h3 className="font-semibold mb-2">Certificate</h3>
-                  {selectedApp.certificateFile ? (
-                    selectedApp.certificateFile.toLowerCase().endsWith('.pdf') ? (
-                      <a 
-                        href={assetUrl(selectedApp.certificateFile)} 
-                        target="_blank" 
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-blue-50 transition-colors"
-                      >
-                        <FileText className="h-4 w-4" />
-                        View Certificate (PDF)
-                      </a>
-                    ) : (
+              {/* Document Uploads Section */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-red-600 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-900">Document Uploads</h3>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-2 text-sm text-muted-foreground">Passport Photo</h4>
+                    {selectedApp.passportPhoto ? (
                       <img 
-                        src={assetUrl(selectedApp.certificateFile)} 
-                        alt="certificate" 
-                        className="h-32 w-48 object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
-                        onClick={() => openViewer(assetUrl(selectedApp.certificateFile))}
+                        src={assetUrl(selectedApp.passportPhoto)} 
+                        alt="passport" 
+                        className="h-32 w-32 object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
+                        onClick={() => openViewer(assetUrl(selectedApp.passportPhoto))}
                       />
-                    )
-                  ) : (
-                    <div className="text-sm text-muted-foreground">No certificate uploaded</div>
+                    ) : (
+                      <div className="text-sm text-muted-foreground">No passport image uploaded</div>
+                    )}
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2 text-sm text-muted-foreground">Certificate</h4>
+                    {selectedApp.certificateFile ? (
+                      selectedApp.certificateFile.toLowerCase().endsWith('.pdf') ? (
+                        <a 
+                          href={assetUrl(selectedApp.certificateFile)} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-blue-50 transition-colors"
+                        >
+                          <FileText className="h-4 w-4" />
+                          View Certificate (PDF)
+                        </a>
+                      ) : (
+                        <img 
+                          src={assetUrl(selectedApp.certificateFile)} 
+                          alt="certificate" 
+                          className="h-32 w-48 object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
+                          onClick={() => openViewer(assetUrl(selectedApp.certificateFile))}
+                        />
+                      )
+                    ) : (
+                      <div className="text-sm text-muted-foreground">No certificate uploaded</div>
+                    )}
+                  </div>
+
+                  {(selectedApp.type === 'doctor' || selectedApp.type === 'dentist') && selectedApp.clinicPhotos && selectedApp.clinicPhotos.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2 text-sm text-muted-foreground">Clinic Photos ({selectedApp.clinicPhotos.length})</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {selectedApp.clinicPhotos.map((photo: string, index: number) => (
+                          <img 
+                            key={index}
+                            src={assetUrl(photo)} 
+                            alt={`clinic-${index + 1}`} 
+                            className="h-24 w-full object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
+                            onClick={() => openViewer(assetUrl(photo))}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
-              </div>
+              </section>
+
+              {/* Discount Information Section */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-green-600 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-900">Discount Information</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Discount Amount</h4>
+                    <div className="text-base">{selectedApp.discountAmount || 'Not specified'}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-semibold text-sm text-muted-foreground">Services/Procedures for Discount</h4>
+                    <div className="text-base">
+                      {selectedApp.discountItems && selectedApp.discountItems.length > 0 
+                        ? selectedApp.discountItems.join(', ') 
+                        : 'Not specified'}
+                    </div>
+                  </div>
+                </div>
+              </section>
 
               <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-4">
                 <Button variant="outline" onClick={closeAppDialog}>Close</Button>

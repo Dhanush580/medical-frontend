@@ -25,6 +25,8 @@ const Dashboard = () => {
   const [showStateSuggestions, setShowStateSuggestions] = React.useState(false);
   const [showDistrictSuggestions, setShowDistrictSuggestions] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('partners');
+  const [inputState, setInputState] = React.useState('');
+  const [inputDistrict, setInputDistrict] = React.useState('');
 
   React.useEffect(() => {
     const loadUser = async () => {
@@ -59,14 +61,14 @@ const Dashboard = () => {
     loadUser();
   }, []);
 
-  // Instant search effect
+  // Instant search effect - only for query and type changes
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchPartners();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [query, selectedState, selectedDistrict, selectedType]);
+  }, [query, selectedType]);
 
   const navigate = useNavigate();
 
@@ -95,8 +97,8 @@ const Dashboard = () => {
   };
 
   const handleStateInputChange = (value: string) => {
-    setSelectedState(value);
-    setSelectedDistrict('');
+    setInputState(value);
+    setInputDistrict('');
     setDistrictSuggestions([]);
 
     if (value.trim()) {
@@ -112,10 +114,10 @@ const Dashboard = () => {
   };
 
   const handleDistrictInputChange = (value: string) => {
-    setSelectedDistrict(value);
+    setInputDistrict(value);
 
-    if (value.trim() && selectedState) {
-      const districts = getDistrictsForState(selectedState);
+    if (value.trim() && inputState) {
+      const districts = getDistrictsForState(inputState);
       const filtered = districts
         .filter(district => district.toLowerCase().includes(value.toLowerCase()))
         .slice(0, 10);
@@ -128,14 +130,18 @@ const Dashboard = () => {
   };
 
   const selectStateSuggestion = (state: string) => {
+    setInputState(state);
     setSelectedState(state);
+    setInputDistrict('');
+    setSelectedDistrict('');
     setStateSuggestions([]);
     setShowStateSuggestions(false);
-    setSelectedDistrict('');
+    setDistrictSuggestions([]);
     searchPartners();
   };
 
   const selectDistrictSuggestion = (district: string) => {
+    setInputDistrict(district);
     setSelectedDistrict(district);
     setDistrictSuggestions([]);
     setShowDistrictSuggestions(false);
@@ -283,6 +289,7 @@ const Dashboard = () => {
                         <SelectContent>
                           <SelectItem value="all">All Healthcare Services</SelectItem>
                           <SelectItem value="doctor">Doctors & Clinics</SelectItem>
+                          <SelectItem value="dentist">Dentists</SelectItem>
                           <SelectItem value="diagnostic">Diagnostic Centers</SelectItem>
                           <SelectItem value="pharmacy">Pharmacies</SelectItem>
                         </SelectContent>
@@ -293,7 +300,7 @@ const Dashboard = () => {
                       <Label htmlFor="state" className="text-sm font-medium">State</Label>
                       <Input
                         id="state"
-                        value={selectedState}
+                        value={inputState}
                         onChange={(e) => handleStateInputChange(e.target.value)}
                         onFocus={() => stateSuggestions.length > 0 && setShowStateSuggestions(true)}
                         placeholder="Type state name..."
@@ -318,12 +325,12 @@ const Dashboard = () => {
                       <Label htmlFor="district" className="text-sm font-medium">District</Label>
                       <Input
                         id="district"
-                        value={selectedDistrict}
+                        value={inputDistrict}
                         onChange={(e) => handleDistrictInputChange(e.target.value)}
                         onFocus={() => districtSuggestions.length > 0 && setShowDistrictSuggestions(true)}
                         placeholder="Type district name..."
                         className="rounded-xl border-muted-foreground/20 focus:border-primary transition-colors disabled:opacity-50"
-                        disabled={!selectedState}
+                        disabled={!inputState}
                       />
                       {showDistrictSuggestions && districtSuggestions.length > 0 && (
                         <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-xl shadow-lg max-h-48 overflow-y-auto">
@@ -340,6 +347,32 @@ const Dashboard = () => {
                       )}
                     </div>
                   </div>
+
+                  {/* Clear Filters */}
+                  {(query || selectedType !== 'all' || selectedState || selectedDistrict) && (
+                    <div className="flex justify-center mt-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setQuery('');
+                          setSelectedType('all');
+                          setSelectedState('');
+                          setSelectedDistrict('');
+                          setInputState('');
+                          setInputDistrict('');
+                          setStateSuggestions([]);
+                          setDistrictSuggestions([]);
+                          setShowStateSuggestions(false);
+                          setShowDistrictSuggestions(false);
+                          searchPartners();
+                        }}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        Clear all filters
+                      </Button>
+                    </div>
+                  )}
 
                   {/* Results */}
                   {loading && (
@@ -358,37 +391,175 @@ const Dashboard = () => {
                           {selectedType === 'all' ? 'All Types' : selectedType}
                         </Badge>
                       </div>
-                      <div className="grid gap-4 max-h-96 overflow-y-auto pr-2">
+                      <div className="grid gap-6 max-h-96 overflow-y-auto pr-2">
                         {partners.map((p, idx) => (
                           <Card 
                             key={idx} 
-                            className="border-muted-foreground/20 hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-pointer rounded-xl"
+                            className="border-muted-foreground/20 hover:border-primary/30 hover:shadow-lg transition-all duration-200 cursor-pointer rounded-xl overflow-hidden"
                           >
-                            <CardContent className="p-4">
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1 space-y-3">
-                                  <div className="flex items-center gap-3">
-                                    <h5 className="font-semibold text-lg">{p.name}</h5>
-                                    <Badge variant="outline" className="capitalize bg-blue-50 text-blue-700 border-blue-200">
+                            <CardContent className="p-6">
+                              {/* Header with Name and Type */}
+                              <div className="flex items-start justify-between mb-4">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <h5 className="font-bold text-xl text-gray-900">{p.name}</h5>
+                                    <Badge variant="outline" className="capitalize bg-blue-50 text-blue-700 border-blue-200 font-medium">
                                       {p.type}
                                     </Badge>
                                   </div>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">{p.address}</p>
-                                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                    {p.contactPhone && (
-                                      <div className="flex items-center gap-2">
-                                        <Phone className="h-4 w-4" />
-                                        <span>{p.contactPhone}</span>
+                                  {p.responsible?.name && (
+                                    <p className="text-sm text-muted-foreground flex items-center gap-2">
+                                      <User className="h-4 w-4" />
+                                      Dr. {p.responsible.name}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Main Information Grid */}
+                              <div className="grid md:grid-cols-2 gap-6 mb-4">
+                                {/* Contact Information */}
+                                <div className="space-y-3">
+                                  <h6 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">Contact Information</h6>
+                                  {p.contactPhone && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <Phone className="h-4 w-4 text-green-600" />
+                                      <span className="font-medium">{p.contactPhone}</span>
+                                    </div>
+                                  )}
+                                  {p.contactEmail && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <Mail className="h-4 w-4 text-blue-600" />
+                                      <span className="font-medium">{p.contactEmail}</span>
+                                    </div>
+                                  )}
+                                  {p.website && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <div className="h-4 w-4 rounded bg-purple-100 flex items-center justify-center">
+                                        <span className="text-xs font-bold text-purple-600">W</span>
+                                      </div>
+                                      <a 
+                                        href={p.website} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="font-medium text-purple-600 hover:underline"
+                                      >
+                                        Visit Website
+                                      </a>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Location Information */}
+                                <div className="space-y-3">
+                                  <h6 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">Location</h6>
+                                  {p.address && (
+                                    <div className="flex items-start gap-2 text-sm">
+                                      <MapPin className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                                      <span className="leading-relaxed">{p.address}</span>
+                                    </div>
+                                  )}
+                                  {(p.district || p.state) && (
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground ml-6">
+                                      <span>{p.district}{p.district && p.state ? ', ' : ''}{p.state}</span>
+                                      {p.pincode && <span className="text-xs bg-gray-100 px-2 py-1 rounded">{p.pincode}</span>}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Timings and Specialization */}
+                              <div className="grid md:grid-cols-2 gap-6 mb-4">
+                                {/* Available Timings */}
+                                <div className="space-y-2">
+                                  <h6 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">Available Timings</h6>
+                                  {(p.timeFrom || p.timeTo) && (
+                                    <div className="flex items-center gap-2 text-sm">
+                                      <div className="h-4 w-4 rounded bg-green-100 flex items-center justify-center">
+                                        <span className="text-xs font-bold text-green-600">T</span>
+                                      </div>
+                                      <span className="font-medium">
+                                        {p.timeFrom && p.timeTo ? `${p.timeFrom} - ${p.timeTo}` : (p.timeFrom || p.timeTo)}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {(p.dayFrom || p.dayTo) && (
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground ml-6">
+                                      <span>{p.dayFrom && p.dayTo ? `${p.dayFrom} - ${p.dayTo}` : (p.dayFrom || p.dayTo)}</span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Specialization and Council */}
+                                <div className="space-y-2">
+                                  {(p.specialization || (p.council?.name || p.council?.number)) && (
+                                    <>
+                                      <h6 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">
+                                        {p.type === 'doctor' || p.type === 'dentist' ? 'Specialization' : 'Details'}
+                                      </h6>
+                                      {p.specialization && (
+                                        <div className="flex items-center gap-2 text-sm">
+                                          <div className="h-4 w-4 rounded bg-orange-100 flex items-center justify-center">
+                                            <span className="text-xs font-bold text-orange-600">S</span>
+                                          </div>
+                                          <span className="font-medium">{p.specialization}</span>
+                                        </div>
+                                      )}
+                                      {(p.council?.name || p.council?.number) && (
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground ml-6">
+                                          <span>{p.council?.name}{p.council?.name && p.council?.number ? ' - ' : ''}{p.council?.number}</span>
+                                        </div>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Discount Information */}
+                              {(p.discountAmount || (p.discountItems && p.discountItems.length > 0)) && (
+                                <div className="pt-4 border-t border-gray-100">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <div className="h-5 w-5 rounded bg-yellow-100 flex items-center justify-center">
+                                      <span className="text-xs font-bold text-yellow-600">%</span>
+                                    </div>
+                                    <h6 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">Discount Information</h6>
+                                  </div>
+                                  <div className="grid sm:grid-cols-2 gap-4">
+                                    {p.discountAmount && (
+                                      <div className="text-sm">
+                                        <span className="text-muted-foreground">Discount: </span>
+                                        <span className="font-semibold text-green-600">{p.discountAmount}</span>
                                       </div>
                                     )}
-                                    {p.state && p.district && (
-                                      <div className="flex items-center gap-2">
-                                        <MapPin className="h-4 w-4" />
-                                        <span>{p.district}, {p.state}</span>
+                                    {p.discountItems && p.discountItems.length > 0 && (
+                                      <div className="text-sm">
+                                        <span className="text-muted-foreground">Services: </span>
+                                        <span className="font-medium">{p.discountItems.join(', ')}</span>
                                       </div>
                                     )}
                                   </div>
                                 </div>
+                              )}
+
+                              {/* Footer with additional info */}
+                              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                  <span>Members served: {p.membersServed || 0}</span>
+                                  <span>•</span>
+                                  <span>Joined {new Date(p.createdAt).toLocaleDateString()}</span>
+                                </div>
+                                <Badge 
+                                  variant="secondary" 
+                                  className={`text-xs ${
+                                    p.status === 'Active' 
+                                      ? 'bg-green-50 text-green-700' 
+                                      : p.status === 'Pending'
+                                      ? 'bg-yellow-50 text-yellow-700'
+                                      : 'bg-gray-50 text-gray-700'
+                                  }`}
+                                >
+                                  {p.status}
+                                </Badge>
                               </div>
                             </CardContent>
                           </Card>

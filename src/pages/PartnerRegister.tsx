@@ -15,10 +15,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Stethoscope, Pill, Microscope, ArrowLeft, Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { Stethoscope, Pill, Microscope, ArrowLeft, Upload, CheckCircle, AlertCircle, Shield, Users, Clock, Award } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
-type Role = "doctor" | "diagnostic" | "pharmacy";
+type Role = "doctor" | "dentist" | "diagnostic" | "pharmacy";
 
 const PartnerRegister = () => {
   const navigate = useNavigate();
@@ -32,6 +32,10 @@ const PartnerRegister = () => {
   const [pincode, setPincode] = useState("");
   const [address, setAddress] = useState("");
   const [timings, setTimings] = useState("");
+  const [timeFrom, setTimeFrom] = useState("");
+  const [timeTo, setTimeTo] = useState("");
+  const [dayFrom, setDayFrom] = useState("");
+  const [dayTo, setDayTo] = useState("");
   const [website, setWebsite] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
@@ -47,10 +51,17 @@ const PartnerRegister = () => {
   // registration / council
   const [councilName, setCouncilName] = useState("");
   const [councilNumber, setCouncilNumber] = useState("");
+  const [specialization, setSpecialization] = useState("");
+  const [customSpecialization, setCustomSpecialization] = useState("");
 
   // center-specific
   const [centerName, setCenterName] = useState("");
   const [clinicName, setClinicName] = useState("");
+
+  // discount fields
+  const [discountAmount, setDiscountAmount] = useState("");
+  const [discountItems, setDiscountItems] = useState<string[]>([]);
+  const [currentDiscountItem, setCurrentDiscountItem] = useState("");
 
   // files
   const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
@@ -72,6 +83,10 @@ const PartnerRegister = () => {
     setCustomDistrict("");
     setAddress("");
     setTimings("");
+    setTimeFrom("");
+    setTimeTo("");
+    setDayFrom("");
+    setDayTo("");
     setWebsite("");
     setContactEmail("");
     setContactPhone("");
@@ -83,17 +98,22 @@ const PartnerRegister = () => {
     setPersonDOB("");
     setCouncilName("");
     setCouncilNumber("");
+    setSpecialization("");
+    setCustomSpecialization("");
     setClinicName("");
     setCenterName("");
     setPassportPhoto(null);
     setCertificateFile(null);
     setClinicPhotos(null);
     setPincode("");
+    setDiscountAmount("");
+    setDiscountItems([]);
+    setCurrentDiscountItem("");
   };
 
   const validate = () => {
     // basic required checks per role
-    if (!role) return 'Please select a partner type (Doctor / Diagnostic / Pharmacy).';
+    if (!role) return 'Please select a partner type (Doctor / Dentist / Diagnostic / Pharmacy).';
     if (!personName) return 'Please enter responsible person name.';
     if (!contactPhone) return 'Please enter a contact phone number.';
     if (!contactEmail) return 'Please enter a contact email.';
@@ -106,10 +126,16 @@ const PartnerRegister = () => {
     if (!pincode) return 'Please enter a pincode.';
     if (!councilName) return 'Please enter council/registration authority name.';
     if (!councilNumber) return 'Please enter council/registration number.';
-    // doctor-specific file checks
-    if (role === 'doctor' && !passportPhoto) return 'Please upload passport photo for the doctor.';
+    // specialization required for doctors and dentists
+    if ((role === 'doctor' || role === 'dentist') && !specialization) return 'Please select your specialization.';
+    if ((role === 'doctor' || role === 'dentist') && specialization === 'Other' && !customSpecialization.trim()) return 'Please enter your specialization.';
+    // doctor and dentist specific file checks
+    if ((role === 'doctor' || role === 'dentist') && !passportPhoto) return 'Please upload passport photo for the practitioner.';
     // centers require certificate
     if ((role === 'diagnostic' || role === 'pharmacy') && !certificateFile) return 'Please upload the government registration certificate.';
+    // discount validation
+    if (!discountAmount) return 'Please specify the discount amount you are willing to provide.';
+    if (discountItems.length === 0) return 'Please add at least one service/procedure you want to offer discount on.';
     return null;
   };
 
@@ -131,6 +157,10 @@ const PartnerRegister = () => {
       form.append('responsibleDOB', personDOB);
       form.append('address', address);
       form.append('timings', timings);
+      if (timeFrom) form.append('timeFrom', timeFrom);
+      if (timeTo) form.append('timeTo', timeTo);
+      if (dayFrom) form.append('dayFrom', dayFrom);
+      if (dayTo) form.append('dayTo', dayTo);
       form.append('website', website);
       form.append('contactEmail', contactEmail);
       form.append('contactPhone', contactPhone);
@@ -138,12 +168,18 @@ const PartnerRegister = () => {
       form.append('password', password);
       form.append('councilName', councilName);
       form.append('councilNumber', councilNumber);
+      if ((role === 'doctor' || role === 'dentist') && specialization) {
+        const finalSpecialization = specialization === 'Other' ? customSpecialization.trim() : specialization;
+        form.append('specialization', finalSpecialization);
+      }
       form.append('state', stateValue);
       const effDistrict = district === 'Other' ? customDistrict : (district || customDistrict);
       form.append('district', effDistrict || '');
       form.append('pincode', pincode || '');
+      form.append('discountAmount', discountAmount);
+      form.append('discountItems', JSON.stringify(discountItems));
 
-      if (role === 'doctor') {
+      if (role === 'doctor' || role === 'dentist') {
         form.append('clinicName', clinicName);
         if (clinicPhotos) {
           Array.from(clinicPhotos).forEach((f, idx) => form.append('clinicPhotos', f, f.name));
@@ -154,7 +190,7 @@ const PartnerRegister = () => {
       }
       // passportPhoto is optional for all roles but can be uploaded
       if (passportPhoto) form.append('passportPhoto', passportPhoto, passportPhoto.name);
-      // certificate is required for centers, optional for doctors
+      // certificate is required for centers, optional for doctors and dentists
       if (certificateFile) form.append('certificateFile', certificateFile, certificateFile.name);
 
       const res = await fetch(apiUrl('api/partners/register'), {
@@ -195,10 +231,85 @@ const PartnerRegister = () => {
             Join our healthcare network and expand your reach. Choose your partner type to begin the registration process.
           </p>
         </div>
+
+        {/* Partner Criteria Section */}
+        <div className="mb-12 max-w-5xl mx-auto">
+          <Card className="border-2 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 shadow-lg">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-amber-800">Partner Requirements & Criteria</CardTitle>
+                  <CardDescription className="text-amber-700 mt-1">
+                    Please review these requirements before proceeding with registration
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-4 bg-white/60 rounded-lg border border-amber-200">
+                  <Award className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-amber-800 text-sm">Mandatory Discount on Total Bill</h4>
+                    <p className="text-amber-700 text-sm mt-1">
+                      Every partner must provide some discount on the total bill for all HealthConnect members
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-white/60 rounded-lg border border-amber-200">
+                  <Users className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-amber-800 text-sm">Procedure/Service Discounts</h4>
+                    <p className="text-amber-700 text-sm mt-1">
+                      Every partner should provide discounts on some of their available procedures or services
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-white/60 rounded-lg border border-amber-200">
+                  <Stethoscope className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-amber-800 text-sm">Dentist Requirements</h4>
+                    <p className="text-amber-700 text-sm mt-1">
+                      Dentists must provide free consultation for HealthConnect members
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-white/60 rounded-lg border border-amber-200">
+                  <Pill className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-amber-800 text-sm">Pharmacy Requirements</h4>
+                    <p className="text-amber-700 text-sm mt-1">
+                      Pharmacies must provide discounts on medicines and some other goods for members
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-white/60 rounded-lg border border-amber-200">
+                  <Microscope className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-amber-800 text-sm">Diagnostic Center Requirements</h4>
+                    <p className="text-amber-700 text-sm mt-1">
+                      Diagnostic centers must provide some discount on some of their tests they perform
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 p-3 bg-amber-100 rounded-lg border border-amber-300">
+                <p className="text-amber-800 text-sm font-medium">
+                  <AlertCircle className="h-4 w-4 inline mr-2" />
+                  All applications undergo thorough verification. Only approved partners who commit to these discount requirements will be listed on our platform.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         
-        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {[
             { role: 'doctor' as Role, icon: Stethoscope, title: 'Doctor', desc: 'Register as a medical practitioner and join our network' },
+            { role: 'dentist' as Role, icon: Stethoscope, title: 'Dentist', desc: 'Register as a dental practitioner and join our network' },
             { role: 'diagnostic' as Role, icon: Microscope, title: 'Diagnostic Center', desc: 'Register your diagnostic facility for patient referrals' },
             { role: 'pharmacy' as Role, icon: Pill, title: 'Pharmacy', desc: 'Register your pharmacy for discounted medications' }
           ].map(({ role: roleOption, icon: Icon, title, desc }) => (
@@ -376,14 +487,96 @@ const PartnerRegister = () => {
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">Timings</Label>
-                      <Input 
-                        value={timings} 
-                        onChange={(e) => setTimings(e.target.value)} 
-                        placeholder="e.g. Mon-Fri 9:00-17:00"
-                        className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
+                      <Label className="text-sm font-medium text-gray-700">Available Timings</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <select
+                          value={timeFrom}
+                          onChange={(e) => setTimeFrom(e.target.value)}
+                          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        >
+                          <option value="">From</option>
+                          <option value="6:00 AM">6:00 AM</option>
+                          <option value="7:00 AM">7:00 AM</option>
+                          <option value="8:00 AM">8:00 AM</option>
+                          <option value="9:00 AM">9:00 AM</option>
+                          <option value="10:00 AM">10:00 AM</option>
+                          <option value="11:00 AM">11:00 AM</option>
+                          <option value="12:00 PM">12:00 PM</option>
+                          <option value="1:00 PM">1:00 PM</option>
+                          <option value="2:00 PM">2:00 PM</option>
+                          <option value="3:00 PM">3:00 PM</option>
+                          <option value="4:00 PM">4:00 PM</option>
+                          <option value="5:00 PM">5:00 PM</option>
+                          <option value="6:00 PM">6:00 PM</option>
+                          <option value="7:00 PM">7:00 PM</option>
+                          <option value="8:00 PM">8:00 PM</option>
+                          <option value="9:00 PM">9:00 PM</option>
+                          <option value="10:00 PM">10:00 PM</option>
+                          <option value="11:00 PM">11:00 PM</option>
+                        </select>
+                        <select
+                          value={timeTo}
+                          onChange={(e) => setTimeTo(e.target.value)}
+                          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        >
+                          <option value="">To</option>
+                          <option value="6:00 AM">6:00 AM</option>
+                          <option value="7:00 AM">7:00 AM</option>
+                          <option value="8:00 AM">8:00 AM</option>
+                          <option value="9:00 AM">9:00 AM</option>
+                          <option value="10:00 AM">10:00 AM</option>
+                          <option value="11:00 AM">11:00 AM</option>
+                          <option value="12:00 PM">12:00 PM</option>
+                          <option value="1:00 PM">1:00 PM</option>
+                          <option value="2:00 PM">2:00 PM</option>
+                          <option value="3:00 PM">3:00 PM</option>
+                          <option value="4:00 PM">4:00 PM</option>
+                          <option value="5:00 PM">5:00 PM</option>
+                          <option value="6:00 PM">6:00 PM</option>
+                          <option value="7:00 PM">7:00 PM</option>
+                          <option value="8:00 PM">8:00 PM</option>
+                          <option value="9:00 PM">9:00 PM</option>
+                          <option value="10:00 PM">10:00 PM</option>
+                          <option value="11:00 PM">11:00 PM</option>
+                        </select>
+                      </div>
                     </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-700">Available Days</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <select
+                          value={dayFrom}
+                          onChange={(e) => setDayFrom(e.target.value)}
+                          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        >
+                          <option value="">From</option>
+                          <option value="Monday">Monday</option>
+                          <option value="Tuesday">Tuesday</option>
+                          <option value="Wednesday">Wednesday</option>
+                          <option value="Thursday">Thursday</option>
+                          <option value="Friday">Friday</option>
+                          <option value="Saturday">Saturday</option>
+                          <option value="Sunday">Sunday</option>
+                        </select>
+                        <select
+                          value={dayTo}
+                          onChange={(e) => setDayTo(e.target.value)}
+                          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        >
+                          <option value="">To</option>
+                          <option value="Monday">Monday</option>
+                          <option value="Tuesday">Tuesday</option>
+                          <option value="Wednesday">Wednesday</option>
+                          <option value="Thursday">Thursday</option>
+                          <option value="Friday">Friday</option>
+                          <option value="Saturday">Saturday</option>
+                          <option value="Sunday">Sunday</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-700">Website</Label>
                       <Input 
@@ -470,6 +663,67 @@ const PartnerRegister = () => {
                       className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
+                  {(role === 'doctor' || role === 'dentist') && (
+                    <div className="space-y-2 md:col-span-2">
+                      <Label className="text-sm font-medium text-gray-700">Specialization *</Label>
+                      <select
+                        value={specialization}
+                        onChange={(e) => {
+                          setSpecialization(e.target.value);
+                          if (e.target.value !== 'Other') {
+                            setCustomSpecialization('');
+                          }
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      >
+                        <option value="">Select specialization</option>
+                        {role === 'doctor' ? (
+                          <>
+                            <option value="General Medicine">General Medicine</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Gynecology">Gynecology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Ophthalmology">Ophthalmology</option>
+                            <option value="ENT">ENT (Ear, Nose, Throat)</option>
+                            <option value="Psychiatry">Psychiatry</option>
+                            <option value="Radiology">Radiology</option>
+                            <option value="Urology">Urology</option>
+                            <option value="Nephrology">Nephrology</option>
+                            <option value="Oncology">Oncology</option>
+                            <option value="Endocrinology">Endocrinology</option>
+                            <option value="Gastroenterology">Gastroenterology</option>
+                            <option value="Pulmonology">Pulmonology</option>
+                            <option value="Rheumatology">Rheumatology</option>
+                            <option value="Other">Other</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="General Dentistry">General Dentistry</option>
+                            <option value="Orthodontics">Orthodontics</option>
+                            <option value="Oral Surgery">Oral Surgery</option>
+                            <option value="Periodontics">Periodontics</option>
+                            <option value="Endodontics">Endodontics</option>
+                            <option value="Prosthodontics">Prosthodontics</option>
+                            <option value="Pediatric Dentistry">Pediatric Dentistry</option>
+                            <option value="Oral Pathology">Oral Pathology</option>
+                            <option value="Oral Medicine">Oral Medicine</option>
+                            <option value="Other">Other</option>
+                          </>
+                        )}
+                      </select>
+                      {specialization === 'Other' && (
+                        <Input
+                          value={customSpecialization}
+                          onChange={(e) => setCustomSpecialization(e.target.value)}
+                          placeholder="Enter your specialization"
+                          className="mt-2 transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               </section>
 
@@ -544,6 +798,86 @@ const PartnerRegister = () => {
                     </div>
                   </div>
                 )}
+              </section>
+
+              {/* Discount Information Section */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-8 bg-green-600 rounded-full"></div>
+                  <h3 className="text-xl font-semibold text-gray-900">Discount Information</h3>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Discount Amount *</Label>
+                    <Input 
+                      value={discountAmount} 
+                      onChange={(e) => setDiscountAmount(e.target.value)} 
+                      placeholder="e.g., 10% off, ₹500 off, etc."
+                      className="transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500">Specify the discount you are willing to provide to HealthConnect members</p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <Label className="text-sm font-medium text-gray-700">Services/Procedures for Discount *</Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        value={currentDiscountItem} 
+                        onChange={(e) => setCurrentDiscountItem(e.target.value)} 
+                        placeholder="e.g., Consultation, Blood Test, X-Ray, etc."
+                        className="transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (currentDiscountItem.trim()) {
+                              setDiscountItems([...discountItems, currentDiscountItem.trim()]);
+                              setCurrentDiscountItem("");
+                            }
+                          }
+                        }}
+                      />
+                      <Button 
+                        type="button"
+                        onClick={() => {
+                          if (currentDiscountItem.trim()) {
+                            setDiscountItems([...discountItems, currentDiscountItem.trim()]);
+                            setCurrentDiscountItem("");
+                          }
+                        }}
+                        className="bg-green-600 hover:bg-green-700 text-white px-4"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                    <p className="text-xs text-gray-500">Add services/procedures you want to offer discount on. Press Enter or click Add to include them.</p>
+                    
+                    {discountItems.length > 0 && (
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-gray-700">Added Services:</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {discountItems.map((item, index) => (
+                            <Badge 
+                              key={index} 
+                              variant="secondary" 
+                              className="flex items-center gap-2 bg-green-100 text-green-800 hover:bg-green-200 px-3 py-1"
+                            >
+                              {item}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setDiscountItems(discountItems.filter((_, i) => i !== index));
+                                }}
+                                className="ml-1 text-green-600 hover:text-red-600 transition-colors"
+                              >
+                                ×
+                              </button>
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </section>
 
               {/* Status and Actions */}
