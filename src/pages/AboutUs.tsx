@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, Shield, Users, Award, ArrowRight } from "lucide-react";
 
@@ -19,22 +18,22 @@ const AboutUs = () => {
 
   const features = [
     {
-      icon: <Heart className="w-8 h-8" />,
+      icon: <Heart className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Healthcare Savings",
       description: "Save up to 25% on medical bills, pharmacy purchases, and diagnostic tests through our extensive network."
     },
     {
-      icon: <Shield className="w-8 h-8" />,
+      icon: <Shield className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Trusted Network",
       description: "Verified doctors, pharmacies, and diagnostic centers ensuring quality healthcare services across India."
     },
     {
-      icon: <Users className="w-8 h-8" />,
+      icon: <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Family Coverage",
       description: "Extend your benefits to family members with our flexible family membership plans."
     },
     {
-      icon: <Award className="w-8 h-8" />,
+      icon: <Award className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Annual Membership",
       description: "Comprehensive coverage for just ₹365/year - less than ₹1 per day for quality healthcare access."
     }
@@ -48,7 +47,7 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className="min-h-screen md:min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 md:py-20 pb-8 md:pb-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-20 pb-8 md:pb-12">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
@@ -61,7 +60,7 @@ const AboutUs = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-3xl md:text-6xl font-bold text-gray-900 mb-4 md:mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6"
           >
             Making Healthcare{" "}
             <span className="text-blue-600 relative">
@@ -79,7 +78,7 @@ const AboutUs = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8 leading-relaxed"
+            className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 md:mb-8 leading-relaxed"
           >
             MCS Discount Cards is revolutionizing healthcare accessibility by connecting members 
             with trusted medical professionals, pharmacies, and diagnostic centers across India, 
@@ -92,25 +91,23 @@ const AboutUs = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Link to="/membership">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base flex items-center gap-2 hover:bg-blue-700 transition-colors"
-              >
-                Get Your Card Now
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </Link>
-            <Link to="/how-it-works">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-gray-300 text-gray-700 px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base hover:border-blue-600 hover:text-blue-600 transition-colors"
-              >
-                How It Works
-              </motion.button>
-            </Link>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => window.location.href = '/membership'}
+              className="w-full sm:w-auto bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+            >
+              Get Your Card Now
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => window.location.href = '/how-it-works'}
+              className="w-full sm:w-auto border-2 border-gray-300 text-gray-700 px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base hover:border-blue-600 hover:text-blue-600 transition-colors"
+            >
+              How It Works
+            </motion.button>
           </motion.div>
         </div>
       </motion.section>
@@ -123,7 +120,7 @@ const AboutUs = () => {
         viewport={{ once: true }}
         className="container mx-auto px-4 mb-12 md:mb-20"
       >
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-4xl mx-auto">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -138,7 +135,7 @@ const AboutUs = () => {
               >
                 {stat.number}
               </motion.div>
-              <div className="text-gray-600 font-medium">{stat.label}</div>
+              <div className="text-sm md:text-base text-gray-600 font-medium">{stat.label}</div>
             </motion.div>
           ))}
         </div>
@@ -154,9 +151,9 @@ const AboutUs = () => {
       >
         <motion.div
           variants={fadeInUp}
-          className="text-center max-w-2xl mx-auto mb-16"
+          className="text-center max-w-2xl mx-auto mb-12 sm:mb-14 md:mb-16"
         >
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Why Choose MCS?
           </h2>
           <p className="text-base md:text-lg text-gray-600">
@@ -164,7 +161,7 @@ const AboutUs = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
           {features.map((feature, index) => (
             <motion.div
               key={index}
@@ -174,14 +171,14 @@ const AboutUs = () => {
             >
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
-                className="w-12 h-12 md:w-16 md:h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-4 md:mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors"
+                className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-4 md:mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors"
               >
                 {feature.icon}
               </motion.div>
               <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>
@@ -204,7 +201,7 @@ const AboutUs = () => {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl"
           >
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-6">
               Our Mission
             </h2>
             <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6 md:mb-8">
@@ -238,7 +235,7 @@ const AboutUs = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl mb-6 md:mb-8 opacity-90"
+            className="text-base sm:text-lg md:text-xl mb-6 md:mb-8 opacity-90"
           >
             Join thousands of members who are already saving on their healthcare expenses
           </motion.p>
@@ -247,15 +244,14 @@ const AboutUs = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Link to="/membership">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-white text-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg hover:bg-gray-100 transition-colors"
-              >
-                Get Started - ₹365/Year
-              </motion.button>
-            </Link>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => window.location.href = '/membership'}
+              className="w-full sm:w-auto bg-white text-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg hover:bg-gray-100 transition-colors"
+            >
+              Get Started - ₹365/Year
+            </motion.button>
           </motion.div>
         </div>
       </motion.section>
@@ -263,4 +259,4 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;
+export default AboutUs;

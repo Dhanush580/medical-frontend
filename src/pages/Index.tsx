@@ -28,22 +28,22 @@ const Index = () => {
 
   const features = [
     {
-      icon: <BadgePercent className="w-8 h-8" />,
+      icon: <BadgePercent className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Save Up to 25%",
       description: "Significant discounts on medical bills, pharmacy purchases, and diagnostic tests"
     },
     {
-      icon: <Shield className="w-8 h-8" />,
+      icon: <Shield className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Verified Network",
       description: "Trusted doctors, pharmacies, and diagnostic centers with proper credentials"
     },
     {
-      icon: <Users className="w-8 h-8" />,
+      icon: <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Family Coverage",
       description: "Extend benefits to your entire family with special discounts"
     },
     {
-      icon: <Clock className="w-8 h-8" />,
+      icon: <Clock className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       title: "Instant Activation",
       description: "Get your digital membership card immediately after registration"
     }
@@ -101,7 +101,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight px-2 md:px-0"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight"
           >
             <span className="block md:inline">Affordable Healthcare</span>
             <br />
@@ -112,7 +112,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg sm:text-xl md:text-2xl mb-6 md:mb-8 text-blue-100 max-w-2xl mx-auto leading-relaxed px-2 md:px-0"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 text-blue-100 max-w-2xl mx-auto leading-relaxed"
           >
             MCS Discount Cards - Saving you up to 25% on medical expenses through our trusted network of healthcare providers
           </motion.p>
@@ -121,16 +121,16 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center text-center"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center"
           >
             <Link to="/how-it-works" className="w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-auto mx-auto bg-white text-blue-900 px-4 md:px-8 py-2 md:py-4 rounded-xl font-bold text-sm md:text-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 md:gap-3"
+                className="w-full bg-white text-blue-900 px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl font-bold text-sm md:text-lg hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 md:gap-3"
               >
                 Know How This Works
-                <ArrowRight className="w-3 h-3 md:w-5 md:h-5" />
+                <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
               </motion.button>
             </Link>
             
@@ -138,10 +138,10 @@ const Index = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-auto mx-auto bg-blue-600 text-white px-4 md:px-8 py-2 md:py-4 rounded-xl font-bold text-sm md:text-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 md:gap-3 border-2 border-blue-600"
+                className="w-full bg-blue-600 text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl font-bold text-sm md:text-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 md:gap-3 border-2 border-blue-600"
               >
                 Become a Member
-                <Users className="w-3 h-3 md:w-5 md:h-5" />
+                <Users className="w-4 h-4 md:w-5 md:h-5" />
               </motion.button>
             </Link>
 
@@ -149,10 +149,10 @@ const Index = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-auto mx-auto border-2 border-white text-white px-4 md:px-8 py-2 md:py-4 rounded-xl font-bold text-sm md:text-lg hover:bg-white hover:text-blue-900 transition-colors flex items-center justify-center gap-2 md:gap-3"
+                className="w-full border-2 border-white text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-xl font-bold text-sm md:text-lg hover:bg-white hover:text-blue-900 transition-colors flex items-center justify-center gap-2 md:gap-3"
               >
                 Become a Partner
-                <Stethoscope className="w-3 h-3 md:w-5 md:h-5" />
+                <Stethoscope className="w-4 h-4 md:w-5 md:h-5" />
               </motion.button>
             </Link>
           </motion.div>
@@ -161,46 +161,46 @@ const Index = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-2xl mx-auto pb-8 md:pb-0"
+            className="mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 max-w-2xl mx-auto pb-8 md:pb-0"
           >
             <div className="text-center">
-              <div className="text-xl md:text-2xl font-bold">25%</div>
-              <div className="text-blue-200 text-xs md:text-sm">Max Savings</div>
+              <div className="text-xl sm:text-2xl md:text-2xl font-bold">25%</div>
+              <div className="text-blue-200 text-xs sm:text-sm md:text-sm">Max Savings</div>
             </div>
             <div className="text-center">
-              <div className="text-xl md:text-2xl font-bold">₹365</div>
-              <div className="text-blue-200 text-xs md:text-sm">Yearly Cost</div>
+              <div className="text-xl sm:text-2xl md:text-2xl font-bold">₹365</div>
+              <div className="text-blue-200 text-xs sm:text-sm md:text-sm">Yearly Cost</div>
             </div>
             <div className="text-center">
-              <div className="text-xl md:text-2xl font-bold">1000+</div>
-              <div className="text-blue-200 text-xs md:text-sm">Partners</div>
+              <div className="text-xl sm:text-2xl md:text-2xl font-bold">1000+</div>
+              <div className="text-blue-200 text-xs sm:text-sm md:text-sm">Partners</div>
             </div>
             <div className="text-center">
-              <div className="text-xl md:text-2xl font-bold">50K+</div>
-              <div className="text-blue-200 text-xs md:text-sm">Members</div>
+              <div className="text-xl sm:text-2xl md:text-2xl font-bold">50K+</div>
+              <div className="text-blue-200 text-xs sm:text-sm md:text-sm">Members</div>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Why Choose MCS Section */}
-      <section className="py-16 bg-white px-4">
+      <section className="py-12 sm:py-14 md:py-16 bg-white px-4">
         <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-10 sm:mb-12"
           >
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               Why Choose MCS Discount Cards?
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
               Experience healthcare savings like never before with our comprehensive benefits
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -209,12 +209,12 @@ const Index = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="bg-gradient-to-br from-white to-blue-50 p-4 md:p-6 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300"
+                className="bg-gradient-to-br from-white to-blue-50 p-4 sm:p-5 md:p-6 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300"
               >
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-3 md:mb-4">
+                <div className="w-12 h-12 sm:w-13 sm:h-13 md:w-14 md:h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-3 md:mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 md:mb-3">
+                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 mb-2 md:mb-3">
                   {feature.title}
                 </h3>
                 <p className="text-sm md:text-base text-gray-600 leading-relaxed">
@@ -227,29 +227,29 @@ const Index = () => {
       </section>
 
       {/* Available Plans Section */}
-      <section className="py-16 bg-gray-50 px-4">
+      <section className="py-12 sm:py-14 md:py-16 bg-gray-50 px-4">
         <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-10 sm:mb-12"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
               Choose Your Plan
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600">
               Flexible plans to suit your healthcare needs
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-7 md:gap-8 max-w-4xl mx-auto">
             {/* Individual Plan */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border-2 border-blue-200 flex flex-col h-auto md:h-full"
+              className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border-2 border-blue-200 flex flex-col"
             >
               <div className="flex-grow">
                 <div className="text-center mb-4 md:mb-6">
@@ -260,15 +260,15 @@ const Index = () => {
 
                 <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                   {plans[0].features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
                       <span className="text-gray-700 text-sm md:text-base">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <Link to="/signup">
+              <Link to="/signup" className="w-full">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -284,7 +284,7 @@ const Index = () => {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 md:p-8 text-white shadow-xl relative flex flex-col h-auto md:h-full"
+              className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 md:p-8 text-white shadow-xl relative flex flex-col"
             >
               {plans[1].popular && (
                 <div className="absolute -top-3 md:-top-4 left-1/2 transform -translate-x-1/2 z-10">
@@ -330,15 +330,15 @@ const Index = () => {
 
                 <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                   {plans[1].features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-2 sm:gap-3">
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
                       <span className="text-sm md:text-base">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <Link to="/signup">
+              <Link to="/signup" className="w-full">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -353,35 +353,35 @@ const Index = () => {
       </section>
 
       {/* Additional Sections */}
-      <section className="py-16 bg-white px-4">
+      <section className="py-12 sm:py-14 md:py-16 bg-white px-4">
         <div className="container mx-auto max-w-6xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-5 md:mb-6">
               Ready to Start Your Healthcare Savings Journey?
             </h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-7 md:mb-8 max-w-2xl mx-auto">
               Join thousands of satisfied members who are already saving on their medical expenses
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/signup">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <Link to="/signup" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg hover:bg-blue-700 transition-colors w-full sm:w-auto"
+                  className="w-full bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg hover:bg-blue-700 transition-colors"
                 >
                   Get Started Now
                 </motion.button>
               </Link>
-              <Link to="/contact">
+              <Link to="/contact" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="border-2 border-gray-300 text-gray-700 px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg hover:border-blue-600 hover:text-blue-600 transition-colors w-full sm:w-auto"
+                  className="w-full border-2 border-gray-300 text-gray-700 px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg hover:border-blue-600 hover:text-blue-600 transition-colors"
                 >
                   Contact Support
                 </motion.button>
@@ -392,22 +392,22 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
+      <footer className="bg-gray-900 text-white py-10 sm:py-12 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-7 md:gap-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Heart className="h-6 w-6 text-blue-400" />
-                <span className="text-xl font-bold">MCS Cards</span>
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400" />
+                <span className="text-lg sm:text-xl font-bold">MCS Cards</span>
               </div>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-xs sm:text-sm">
                 Making healthcare affordable for every Indian family
               </p>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">For Members</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
+              <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">For Members</h3>
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400">
                 <li><Link to="/signup" className="hover:text-white transition-colors">Register</Link></li>
                 <li><Link to="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
                 <li><Link to="/membership-fee" className="hover:text-white transition-colors">Pricing</Link></li>
@@ -416,16 +416,16 @@ const Index = () => {
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">For Partners</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
+              <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">For Partners</h3>
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400">
                 <li><Link to="/partner/register" className="hover:text-white transition-colors">Become a Partner</Link></li>
                 <li><Link to="/partner/login" className="hover:text-white transition-colors">Login</Link></li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-sm text-gray-400">
+              <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Support</h3>
+              <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400">
                 <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
                 <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
                 <li><Link to="/login" className="hover:text-white transition-colors">Login</Link></li>
@@ -433,8 +433,8 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p className="text-gray-400 text-sm">
+          <div className="border-t border-gray-800 mt-6 sm:mt-7 md:mt-8 pt-6 sm:pt-7 md:pt-8 text-center">
+            <p className="text-gray-400 text-xs sm:text-sm">
               &copy; 2025 MCS Discount Cards. All rights reserved.
             </p>
           </div>
@@ -444,4 +444,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Index;

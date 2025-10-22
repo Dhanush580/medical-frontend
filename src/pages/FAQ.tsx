@@ -132,20 +132,20 @@ const FAQ = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 sm:py-16 md:py-20">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="container mx-auto px-4 mb-12"
+        className="container mx-auto px-4 sm:px-6 mb-8 sm:mb-10 md:mb-12"
       >
         <div className="text-center max-w-4xl mx-auto">
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-5xl md:text-6xl font-bold text-gray-900 mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6"
           >
             Frequently Asked{" "}
             <span className="text-blue-600 relative">
@@ -163,7 +163,7 @@ const FAQ = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-xl text-gray-600 mb-8 leading-relaxed"
+            className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-2"
           >
             Find quick answers to common questions about MCS Discount Cards. 
             Can't find what you're looking for? Contact our support team.
@@ -176,13 +176,13 @@ const FAQ = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="max-w-2xl mx-auto relative"
           >
-            <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search questions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl shadow-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+              className="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 text-sm sm:text-base bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
             />
           </motion.div>
         </div>
@@ -193,10 +193,10 @@ const FAQ = () => {
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="container mx-auto px-4 mb-12"
+        className="container mx-auto px-4 sm:px-6 mb-8 sm:mb-10 md:mb-12"
       >
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap gap-2 sm:gap-3 md:gap-4 justify-center">
             {categories.map((category) => (
               <motion.button
                 key={category.id}
@@ -204,15 +204,15 @@ const FAQ = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveCategory(category.id)}
-                className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-semibold transition-all ${
+                className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4 rounded-xl sm:rounded-2xl text-sm sm:text-base font-semibold transition-all ${
                   activeCategory === category.id
                     ? 'bg-blue-600 text-white shadow-lg'
                     : 'bg-white text-gray-700 shadow-lg hover:shadow-xl'
                 }`}
               >
-                {category.icon}
-                {category.name}
-                <span className={`px-2 py-1 rounded-full text-sm ${
+                <span className="hidden sm:inline">{category.icon}</span>
+                <span className="whitespace-nowrap">{category.name}</span>
+                <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm ${
                   activeCategory === category.id
                     ? 'bg-white text-blue-600'
                     : 'bg-blue-100 text-blue-600'
@@ -230,12 +230,12 @@ const FAQ = () => {
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="container mx-auto px-4 mb-20"
+        className="container mx-auto px-4 sm:px-6 mb-12 sm:mb-16 md:mb-20"
       >
         <div className="max-w-4xl mx-auto">
           <AnimatePresence>
             {filteredFaqs.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {filteredFaqs.map((faq, index) => (
                   <motion.div
                     key={faq.id}
@@ -243,18 +243,18 @@ const FAQ = () => {
                     initial="initial"
                     animate="animate"
                     exit={{ opacity: 0, y: -20 }}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                    className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
                   >
                     <button
                       onClick={() => toggleItem(faq.id)}
-                      className="w-full px-6 py-6 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors"
+                      className="w-full px-4 sm:px-6 py-4 sm:py-6 text-left flex items-center justify-between gap-3 sm:gap-4 hover:bg-gray-50 transition-colors"
                     >
-                      <div className="flex items-start gap-4 flex-1">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0 mt-1">
-                          <span className="font-semibold text-sm">Q</span>
+                      <div className="flex items-start gap-3 sm:gap-4 flex-1">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0 mt-1">
+                          <span className="font-semibold text-xs sm:text-sm">Q</span>
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 text-lg mb-2 text-left">
+                          <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-2 text-left">
                             {faq.question}
                           </h3>
                           <AnimatePresence>
@@ -264,7 +264,7 @@ const FAQ = () => {
                                 animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="text-gray-600 leading-relaxed text-left"
+                                className="text-gray-600 leading-relaxed text-left text-sm sm:text-base"
                               >
                                 {faq.answer}
                               </motion.div>
@@ -275,12 +275,12 @@ const FAQ = () => {
                       <motion.div
                         animate={{ rotate: openItems.includes(faq.id) ? 180 : 0 }}
                         transition={{ duration: 0.3 }}
-                        className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0"
+                        className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0"
                       >
                         {openItems.includes(faq.id) ? (
-                          <Minus className="w-4 h-4" />
+                          <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         ) : (
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         )}
                       </motion.div>
                     </button>
@@ -314,22 +314,22 @@ const FAQ = () => {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
-        className="container mx-auto px-4"
+        className="container mx-auto px-4 sm:px-6"
       >
-        <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-blue-700 rounded-3xl p-12 text-center text-white">
+        <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center text-white">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-white mx-auto mb-6"
+            className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-xl sm:rounded-2xl flex items-center justify-center text-white mx-auto mb-4 sm:mb-6"
           >
-            <MessageCircle className="w-8 h-8" />
+            <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8" />
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-3xl font-bold mb-4"
+            className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4"
           >
             Still Have Questions?
           </motion.h2>
@@ -337,7 +337,7 @@ const FAQ = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-xl mb-8 opacity-90"
+            className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 opacity-90"
           >
             Our support team is here to help you 24/7
           </motion.p>
@@ -345,19 +345,19 @@ const FAQ = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+              className="bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-bold hover:bg-gray-100 transition-colors"
             >
               Contact Support
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-blue-600 transition-colors"
+              className="border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
             >
               Call +91-XXXXX-XXXXX
             </motion.button>
@@ -368,4 +368,4 @@ const FAQ = () => {
   );
 };
 
-export default FAQ;
+export default FAQ;

@@ -155,10 +155,10 @@ const PartnerDashboard = () => {
 
   const getPartnerIcon = (type: string) => {
     switch (type) {
-      case 'doctor': return <Stethoscope className="h-5 w-5" />;
-      case 'diagnostic': return <Microscope className="h-5 w-5" />;
-      case 'pharmacy': return <Pill className="h-5 w-5" />;
-      default: return <Building2 className="h-5 w-5" />;
+      case 'doctor': return <Stethoscope className="h-4 w-4 sm:h-5 sm:w-5" />;
+      case 'diagnostic': return <Microscope className="h-4 w-4 sm:h-5 sm:w-5" />;
+      case 'pharmacy': return <Pill className="h-4 w-4 sm:h-5 sm:w-5" />;
+      default: return <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />;
     }
   };
 
@@ -199,23 +199,23 @@ const PartnerDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
       {/* Navigation */}
       <nav className="border-b bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="container mx-auto px-3 sm:px-4 py-3 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 transition-transform hover:scale-105">
-            <Heart className="h-7 w-7 text-primary" />
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            <Heart className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
+            <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
               HealthConnect
             </span>
           </Link>
-          <div className="flex gap-3 items-center">
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 flex items-center gap-2">
+          <div className="flex gap-2 sm:gap-3 items-center">
+            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 flex items-center gap-1 sm:gap-2 text-xs">
               {getPartnerIcon(partner.type)}
-              {getPartnerTypeLabel(partner.type)}
+              <span className="hidden xs:inline">{getPartnerTypeLabel(partner.type)}</span>
             </Badge>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={handleLogout}
-              className="hover:bg-red-50 hover:text-red-600 transition-colors"
+              className="hover:bg-red-50 hover:text-red-600 transition-colors text-xs sm:text-sm"
             >
               Logout
             </Button>
@@ -223,78 +223,78 @@ const PartnerDashboard = () => {
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Header */}
-        <div className="mb-8 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-3">
-            <Building2 className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Partner Dashboard</span>
+        <div className="mb-6 sm:mb-8 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 rounded-full mb-2 sm:mb-3">
+            <Building2 className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+            <span className="text-xs sm:text-sm font-medium text-primary">Partner Dashboard</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
             Welcome back, Partner! 👋
           </h1>
-          <p className="text-muted-foreground max-w-2xl">
+          <p className="text-muted-foreground max-w-2xl text-sm sm:text-base">
             Manage member verifications, track visits, and monitor your healthcare services
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-all duration-200">
-            <CardContent className="p-4 sm:p-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <Card className="border-0 shadow-sm rounded-xl sm:rounded-2xl hover:shadow-md transition-all duration-200">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">Members Served</p>
-                  <p className="text-xl sm:text-2xl font-bold">{stats.membersServed.toLocaleString()}</p>
+                  <p className="text-xs font-medium text-muted-foreground">Members Served</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold">{stats.membersServed.toLocaleString()}</p>
                   <p className="text-xs text-green-600">Total patients</p>
                 </div>
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-all duration-200">
-            <CardContent className="p-4 sm:p-6">
+          <Card className="border-0 shadow-sm rounded-xl sm:rounded-2xl hover:shadow-md transition-all duration-200">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">Revenue</p>
-                  <p className="text-xl sm:text-2xl font-bold">₹{stats.totalRevenue.toLocaleString()}</p>
+                  <p className="text-xs font-medium text-muted-foreground">Revenue</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold">₹{stats.totalRevenue.toLocaleString()}</p>
                   <p className="text-xs text-green-600">Total earnings</p>
                 </div>
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
+                  <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-all duration-200">
-            <CardContent className="p-4 sm:p-6">
+          <Card className="border-0 shadow-sm rounded-xl sm:rounded-2xl hover:shadow-md transition-all duration-200">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">Avg. Discount</p>
-                  <p className="text-xl sm:text-2xl font-bold">{stats.averageDiscount}</p>
+                  <p className="text-xs font-medium text-muted-foreground">Avg. Discount</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold">{stats.averageDiscount}</p>
                   <p className="text-xs text-green-600">Average offered</p>
                 </div>
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+                <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
+                  <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-all duration-200">
-            <CardContent className="p-4 sm:p-6">
+          <Card className="border-0 shadow-sm rounded-xl sm:rounded-2xl hover:shadow-md transition-all duration-200">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">This Month</p>
-                  <p className="text-xl sm:text-2xl font-bold">{stats.monthlyVisits}</p>
+                  <p className="text-xs font-medium text-muted-foreground">This Month</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold">{stats.monthlyVisits}</p>
                   <p className="text-xs text-muted-foreground">visits</p>
                 </div>
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+                <div className="p-1.5 sm:p-2 bg-orange-100 rounded-lg">
+                  <Calendar className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -302,58 +302,58 @@ const PartnerDashboard = () => {
         </div>
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-xl h-auto">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-lg sm:rounded-xl h-auto">
             <TabsTrigger 
               value="verify-membership" 
-              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg transition-all"
+              className="flex items-center gap-1 sm:gap-2 py-2 sm:py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md sm:rounded-lg transition-all text-xs sm:text-sm"
             >
-              <UserCheck className="h-4 w-4" />
-              <span className="hidden sm:inline">Verify Membership</span>
-              <span className="sm:hidden">Verify</span>
+              <UserCheck className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Verify Membership</span>
+              <span className="xs:hidden">Verify</span>
             </TabsTrigger>
             <TabsTrigger 
               value="recent-visits" 
-              className="flex items-center gap-2 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg transition-all"
+              className="flex items-center gap-1 sm:gap-2 py-2 sm:py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-md sm:rounded-lg transition-all text-xs sm:text-sm"
             >
-              <History className="h-4 w-4" />
-              <span className="hidden sm:inline">Recent Visits</span>
-              <span className="sm:hidden">Visits</span>
+              <History className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden xs:inline">Recent Visits</span>
+              <span className="xs:hidden">Visits</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Verify Membership Tab */}
           <TabsContent value="verify-membership" className="animate-in fade-in-50">
-            <Card className="border-0 shadow-lg rounded-2xl">
-              <CardHeader className={`bg-gradient-to-r ${getPartnerColor(partner.type)} pb-4`}>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Search className="h-6 w-6 text-primary" />
+            <Card className="border-0 shadow-lg rounded-xl sm:rounded-2xl">
+              <CardHeader className={`bg-gradient-to-r ${getPartnerColor(partner.type)} pb-3 sm:pb-4`}>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
+                    <Search className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl">Membership Verification</CardTitle>
-                    <CardDescription className="text-base">
+                    <CardTitle className="text-xl sm:text-2xl">Membership Verification</CardTitle>
+                    <CardDescription className="text-sm sm:text-base">
                       Verify member eligibility, check discount details, and record visits
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-6">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor="membershipId" className="text-sm font-medium">
+              <CardContent className="pt-4 sm:pt-6">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <div className="flex-1 space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="membershipId" className="text-xs sm:text-sm font-medium">
                         Membership ID
                       </Label>
                       <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
                         <Input
                           id="membershipId"
                           placeholder="Enter membership ID (e.g., MED001)"
                           value={membershipId}
                           onChange={(e) => setMembershipId(e.target.value)}
                           onKeyPress={(e) => e.key === 'Enter' && handleVerifyMembership()}
-                          className="pl-10 h-11 rounded-xl border-muted-foreground/20 focus:border-primary transition-colors"
+                          className="pl-7 sm:pl-10 h-9 sm:h-11 rounded-lg sm:rounded-xl border-muted-foreground/20 focus:border-primary transition-colors text-sm sm:text-base"
                         />
                       </div>
                     </div>
@@ -362,11 +362,11 @@ const PartnerDashboard = () => {
                         onClick={handleVerifyMembership}
                         disabled={verifying || !membershipId.trim()}
                         size="lg"
-                        className="px-8 rounded-xl h-11"
+                        className="px-4 sm:px-8 rounded-lg sm:rounded-xl h-9 sm:h-11 text-xs sm:text-sm w-full sm:w-auto"
                       >
                         {verifying ? (
                           <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-1 sm:mr-2"></div>
                             Verifying...
                           </>
                         ) : (
@@ -381,29 +381,29 @@ const PartnerDashboard = () => {
                       verificationResult.success 
                         ? 'border-green-200 bg-green-50' 
                         : 'border-red-200 bg-red-50'
-                    } rounded-xl transition-all duration-300`}>
-                      <div className="flex items-start gap-3">
+                    } rounded-lg sm:rounded-xl transition-all duration-300`}>
+                      <div className="flex items-start gap-2 sm:gap-3">
                         {verificationResult.success ? (
-                          <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                          <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mt-0.5 flex-shrink-0" />
                         ) : (
-                          <XCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                          <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 mt-0.5 flex-shrink-0" />
                         )}
-                        <div className="flex-1 space-y-4">
+                        <div className="flex-1 space-y-3 sm:space-y-4">
                           {verificationResult.success ? (
                             <>
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <h4 className="font-semibold text-green-800 text-xl flex items-center gap-2">
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+                                <h4 className="font-semibold text-green-800 text-lg sm:text-xl flex items-center gap-1 sm:gap-2">
                                   ✓ Valid Membership Verified
                                 </h4>
                                 <Button
                                   size="lg"
                                   onClick={handleRecordVisit}
                                   disabled={recordingVisit}
-                                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 font-medium rounded-xl"
+                                  className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-6 py-1.5 sm:py-2 font-medium rounded-lg sm:rounded-xl text-xs sm:text-sm w-full sm:w-auto"
                                 >
                                   {recordingVisit ? (
                                     <>
-                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                      <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-1 sm:mr-2"></div>
                                       Recording Visit...
                                     </>
                                   ) : (
@@ -414,34 +414,34 @@ const PartnerDashboard = () => {
 
                               {/* Member Details Card */}
                               <Card className="border-green-200 bg-white shadow-sm">
-                                <CardContent className="p-4 sm:p-6">
-                                  <div className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <CardContent className="p-3 sm:p-4 md:p-6">
+                                  <div className="space-y-3 sm:space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                                       <div className="space-y-1">
                                         <Label className="text-xs font-medium text-gray-500 uppercase">Full Name</Label>
-                                        <p className="text-lg font-semibold text-gray-900">{verificationResult.member.name}</p>
+                                        <p className="text-base sm:text-lg font-semibold text-gray-900">{verificationResult.member.name}</p>
                                       </div>
                                       <div className="space-y-1">
                                         <Label className="text-xs font-medium text-gray-500 uppercase">Membership ID</Label>
-                                        <p className="text-lg font-semibold text-gray-900 font-mono">{verificationResult.member.membershipId}</p>
+                                        <p className="text-base sm:text-lg font-semibold text-gray-900 font-mono">{verificationResult.member.membershipId}</p>
                                       </div>
                                       <div className="space-y-1">
                                         <Label className="text-xs font-medium text-gray-500 uppercase">Plan Type</Label>
-                                        <p className="text-base font-medium text-gray-900 capitalize">{verificationResult.member.plan} Membership</p>
+                                        <p className="text-sm sm:text-base font-medium text-gray-900 capitalize">{verificationResult.member.plan} Membership</p>
                                       </div>
                                       <div className="space-y-1">
                                         <Label className="text-xs font-medium text-green-700 uppercase">Discount Rate</Label>
-                                        <p className="text-xl font-bold text-green-700">{verificationResult.member.discount}</p>
+                                        <p className="text-lg sm:text-xl font-bold text-green-700">{verificationResult.member.discount}</p>
                                         <p className="text-xs text-green-600">on all services</p>
                                       </div>
                                     </div>
 
                                     {verificationResult.member.validUntil && (
-                                      <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                        <Calendar className="h-4 w-4 text-blue-600" />
+                                      <div className="flex items-center gap-2 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
                                         <div>
-                                          <p className="text-sm font-medium text-blue-900">Valid Until</p>
-                                          <p className="text-sm text-blue-700">
+                                          <p className="text-xs sm:text-sm font-medium text-blue-900">Valid Until</p>
+                                          <p className="text-xs sm:text-sm text-blue-700">
                                             {new Date(verificationResult.member.validUntil).toLocaleDateString('en-IN', {
                                               weekday: 'long',
                                               year: 'numeric',
@@ -459,25 +459,25 @@ const PartnerDashboard = () => {
                               {/* Family Members */}
                               {verificationResult.member.familyMembers > 0 && (
                                 <Card className="border-blue-200 bg-white">
-                                  <CardContent className="p-4 sm:p-6">
-                                    <h5 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                                      <Users className="h-5 w-5 text-blue-600" />
+                                  <CardContent className="p-3 sm:p-4 md:p-6">
+                                    <h5 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 flex items-center gap-1 sm:gap-2">
+                                      <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                                       Family Members ({verificationResult.member.familyMembers})
                                     </h5>
-                                    <div className="space-y-3">
+                                    <div className="space-y-2 sm:space-y-3">
                                       {verificationResult.member.familyDetails?.map((familyMember: any, index: number) => (
-                                        <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                        <div key={index} className="flex items-center justify-between p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200">
                                           <div className="space-y-1">
-                                            <p className="font-medium text-gray-900">{familyMember.name}</p>
-                                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                                            <p className="font-medium text-gray-900 text-sm sm:text-base">{familyMember.name}</p>
+                                            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2 text-xs sm:text-sm text-gray-600">
                                               <span>Age: {familyMember.age}</span>
-                                              <span>•</span>
+                                              <span className="hidden xs:inline">•</span>
                                               <span className="capitalize">{familyMember.gender}</span>
-                                              <span>•</span>
+                                              <span className="hidden xs:inline">•</span>
                                               <span className="capitalize">{familyMember.relationship}</span>
                                             </div>
                                           </div>
-                                          <Badge variant="outline" className="bg-white">
+                                          <Badge variant="outline" className="bg-white text-xs">
                                             Eligible for {verificationResult.member.discount}
                                           </Badge>
                                         </div>
@@ -489,8 +489,8 @@ const PartnerDashboard = () => {
                             </>
                           ) : (
                             <div>
-                              <h4 className="font-semibold text-red-800 mb-2">Verification Failed</h4>
-                              <p className="text-red-700">{verificationResult.message}</p>
+                              <h4 className="font-semibold text-red-800 mb-1 sm:mb-2 text-sm sm:text-base">Verification Failed</h4>
+                              <p className="text-red-700 text-xs sm:text-sm">{verificationResult.message}</p>
                             </div>
                           )}
                         </div>
@@ -504,51 +504,51 @@ const PartnerDashboard = () => {
 
           {/* Recent Visits Tab */}
           <TabsContent value="recent-visits" className="animate-in fade-in-50">
-            <Card className="border-0 shadow-lg rounded-2xl">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-50 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <History className="h-6 w-6 text-purple-600" />
+            <Card className="border-0 shadow-lg rounded-xl sm:rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-violet-50 pb-3 sm:pb-4">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
+                    <History className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl">Recent Visits</CardTitle>
-                    <CardDescription className="text-base">
+                    <CardTitle className="text-xl sm:text-2xl">Recent Visits</CardTitle>
+                    <CardDescription className="text-sm sm:text-base">
                       Track recent member visits and service history
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
+              <CardContent className="pt-4 sm:pt-6">
+                <div className="space-y-3 sm:space-y-4">
                   {recentVisits.map((visit) => (
                     <Card key={visit.id} className="border-muted-foreground/20 hover:shadow-md transition-all duration-200">
-                      <CardContent className="p-4 sm:p-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-start gap-4 flex-1">
-                            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                              <Users className="h-6 w-6 text-primary" />
+                      <CardContent className="p-3 sm:p-4 md:p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                          <div className="flex items-start gap-3 sm:gap-4 flex-1">
+                            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <Users className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary" />
                             </div>
                             <div className="space-y-1 flex-1">
-                              <h3 className="font-semibold text-lg">{visit.memberName}</h3>
-                              <p className="text-muted-foreground">{visit.service}</p>
-                              <div className="flex items-center gap-4 text-sm">
+                              <h3 className="font-semibold text-base sm:text-lg">{visit.memberName}</h3>
+                              <p className="text-muted-foreground text-sm sm:text-base">{visit.service}</p>
+                              <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2 text-xs sm:text-sm">
                                 <span className="text-green-600 font-medium">{visit.discount} discount</span>
-                                <span className="text-gray-400">•</span>
+                                <span className="hidden xs:inline text-gray-400">•</span>
                                 <span className="font-medium">{visit.amount}</span>
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 sm:gap-3">
                             <Badge 
                               variant={
                                 visit.date === 'Today' ? 'default' : 
                                 visit.date === 'Yesterday' ? 'secondary' : 'outline'
                               }
-                              className="whitespace-nowrap"
+                              className="whitespace-nowrap text-xs"
                             >
                               {visit.date}
                             </Badge>
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" className="text-xs">
                               View Details
                             </Button>
                           </div>
@@ -559,23 +559,23 @@ const PartnerDashboard = () => {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="mt-8 pt-6 border-t">
-                  <h4 className="font-semibold text-lg mb-4">Quick Actions</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <Button variant="outline" className="h-16 flex flex-col gap-1">
-                      <Users className="h-5 w-5" />
+                <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
+                  <h4 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">Quick Actions</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
+                      <Users className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                       <span className="text-xs">Member Directory</span>
                     </Button>
-                    <Button variant="outline" className="h-16 flex flex-col gap-1">
-                      <CreditCard className="h-5 w-5" />
+                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
+                      <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                       <span className="text-xs">Generate Reports</span>
                     </Button>
-                    <Button variant="outline" className="h-16 flex flex-col gap-1">
-                      <Calendar className="h-5 w-5" />
+                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
+                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                       <span className="text-xs">Schedule</span>
                     </Button>
-                    <Button variant="outline" className="h-16 flex flex-col gap-1">
-                      <BarChart3 className="h-5 w-5" />
+                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
+                      <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                       <span className="text-xs">Analytics</span>
                     </Button>
                   </div>

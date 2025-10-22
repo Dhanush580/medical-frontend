@@ -77,95 +77,100 @@ const AdminRegister = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Admin Registration</CardTitle>
-          <CardDescription>Create a new admin account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
+      <div className="min-h-screen flex items-center justify-center bg-background p-3 sm:p-4">
+        <Card className="w-full max-w-md mx-auto">
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl sm:text-2xl">Admin Registration</CardTitle>
+            <CardDescription className="text-sm sm:text-base">Create a new admin account</CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+              <div>
+                <Label htmlFor="name" className="text-sm sm:text-base">Full Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm sm:text-base"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm sm:text-base"
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone" className="text-sm sm:text-base">Phone</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm sm:text-base"
+                />
+              </div>
+              <div>
+                <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm sm:text-base"
+                />
+              </div>
+              <div>
+                <Label htmlFor="confirmPassword" className="text-sm sm:text-base">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 text-sm sm:text-base"
+                />
+              </div>
+              {error && (
+                <Alert variant="destructive" className="mt-3 sm:mt-4">
+                  <AlertDescription className="text-sm sm:text-base">{error}</AlertDescription>
+                </Alert>
+              )}
+              <Button type="submit" className="w-full text-sm sm:text-base" disabled={loading}>
+                {loading ? 'Creating Account...' : 'Register'}
+              </Button>
+            </form>
+            <div className="mt-3 sm:mt-4 text-center">
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Already have an admin account?{' '}
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin/login')}
+                  className="text-primary hover:underline text-xs sm:text-sm"
+                >
+                  Login here
+                </button>
+              </p>
             </div>
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating Account...' : 'Register'}
-            </Button>
-          </form>
-          <div className="mt-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              Already have an admin account?{' '}
-              <button
-                type="button"
-                onClick={() => navigate('/admin/login')}
-                className="text-primary hover:underline"
-              >
-                Login here
-              </button>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 };
 
-export default AdminRegister;
+export default AdminRegister;
