@@ -6,8 +6,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Partner from "./pages/Partner";
 import PartnerRegister from "./pages/PartnerRegister";
@@ -20,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import AboutUs from "./pages/AboutUs";
 import HowItWorks from "./pages/HowItWorks";
 import MembershipFee from "./pages/MembershipFee";
+import MembershipComingSoon from "./pages/MembershipComingSoon";
 import FAQ from "./pages/FAQ";
 import ContactUs from "./pages/ContactUs";
 
@@ -40,8 +39,8 @@ const router = createBrowserRouter([
       { path: '/contact', element: <ContactUs /> },
     ],
   },
-  { path: '/login', element: <Login /> },
-  { path: '/signup', element: <Signup /> },
+  { path: '/login', element: <MembershipComingSoon /> },
+        { path: '/coming-soon', element: <MembershipComingSoon /> },
   { path: '/dashboard', element: <Dashboard /> },
   { path: '/partner', element: <Partner /> },
   { path: '/partner/register', element: <PartnerRegister /> },

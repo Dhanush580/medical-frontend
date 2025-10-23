@@ -224,7 +224,7 @@ const MembershipFee = () => {
                 ))}
               </ul>
 
-              <Link to="/signup" className="block w-full">
+              <Link to="/coming-soon" className="block w-full">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -318,7 +318,7 @@ const MembershipFee = () => {
                 </li>
               </ul>
 
-              <Link to="/signup" className="block w-full">
+              <Link to="/coming-soon" className="block w-full">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -430,7 +430,7 @@ const MembershipFee = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
           >
-            <Link to="/signup" className="w-full sm:w-auto">
+            <Link to="/coming-soon" className="w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

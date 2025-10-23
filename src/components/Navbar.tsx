@@ -199,7 +199,7 @@ const Navbar = () => {
                   className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer"
                   onClick={() => {
                     setRegisterOpen(false);
-                    navigate('/signup');
+                    navigate('/coming-soon');
                   }}
                 >
                   <span className="block w-full">Register as Member</span>
@@ -223,7 +223,7 @@ const Navbar = () => {
                 }`}
               >
                 <Link
-                  to="/signup"
+                  to="/coming-soon"
                   className="block px-4 py-3 text-sm hover:bg-accent hover:text-accent-foreground transition-colors duration-150 rounded-t-md"
                   onClick={() => setRegisterOpen(false)}
                 >

@@ -143,7 +143,7 @@ const Index = () => {
               </motion.button>
             </Link>
             
-            <Link to="/signup" className="w-full sm:w-auto">
+            <Link to="/coming-soon" className="w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -277,7 +277,7 @@ const Index = () => {
                 </ul>
               </div>
 
-              <Link to="/signup" className="w-full">
+              <Link to="/coming-soon" className="w-full">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -347,7 +347,7 @@ const Index = () => {
                 </ul>
               </div>
 
-              <Link to="/signup" className="w-full">
+              <Link to="/coming-soon" className="w-full">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -377,7 +377,7 @@ const Index = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <Link to="/signup" className="w-full sm:w-auto">
+              <Link to="/coming-soon" className="w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -417,7 +417,7 @@ const Index = () => {
             <div>
               <h3 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">For Members</h3>
               <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-400">
-                <li><Link to="/signup" className="hover:text-white transition-colors">Register</Link></li>
+                <li><Link to="/coming-soon" className="hover:text-white transition-colors">Register</Link></li>
                 <li><Link to="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
                 <li><Link to="/membership-fee" className="hover:text-white transition-colors">Pricing</Link></li>
                 <li><Link to="/faq" className="hover:text-white transition-colors">FAQ</Link></li>

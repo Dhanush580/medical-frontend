@@ -67,8 +67,8 @@ const ContactUs = () => {
       icon: <Mail className="w-5 h-5 sm:w-6 sm:h-6" />,
       title: "Email Us",
       description: "Send us an email anytime",
-      details: "support@mcsdiscount.com",
-      action: "mailto:support@mcsdiscount.com",
+      details: "medicostsaver@gmail.com",
+      action: "mailto:medicostsaver@gmail.com",
       buttonText: "Email Now",
       color: "from-blue-500 to-blue-600",
       hoverColor: "hover:from-blue-600 hover:to-blue-700"
@@ -486,7 +486,7 @@ const ContactUs = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <motion.a
               whileHover={{ scale: 1.05 }}
-              href="/signup"
+              href="/coming-soon"
               className="bg-blue-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-center hover:bg-blue-100 transition-colors group"
             >
               <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center text-blue-600 mx-auto mb-2 sm:mb-3 md:mb-4 group-hover:bg-blue-200 transition-colors">

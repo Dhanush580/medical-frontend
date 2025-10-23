@@ -107,7 +107,7 @@ const AboutUs = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/coming-soon')}
               className="w-full sm:w-auto bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
             >
               Get Your Card Now
@@ -260,7 +260,7 @@ const AboutUs = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/coming-soon')}
               className="w-full sm:w-auto bg-white text-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg hover:bg-gray-100 transition-colors"
             >
               Get Started - ₹365/Year
