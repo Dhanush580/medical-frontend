@@ -1,5 +1,5 @@
 import { Heart, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 
@@ -11,6 +11,7 @@ const Navbar = () => {
   const registerTimeoutRef = useRef<NodeJS.Timeout>();
   const loginButtonRef = useRef<HTMLButtonElement>(null);
   const registerButtonRef = useRef<HTMLButtonElement>(null);
+  const navigate = useNavigate();
 
   const handleLoginMouseEnter = () => {
     if (loginTimeoutRef.current) {
@@ -122,16 +123,24 @@ const Navbar = () => {
                 onMouseEnter={handleLoginMouseEnter}
                 onMouseLeave={handleLoginMouseLeave}
               >
-                <div className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer">
-                  <Link to="/login" className="block w-full" onClick={() => setLoginOpen(false)}>
-                    Login as Member
-                  </Link>
+                <div 
+                  className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer"
+                  onClick={() => {
+                    setLoginOpen(false);
+                    navigate('/login');
+                  }}
+                >
+                  <span className="block w-full">Login as Member</span>
                   <div className="absolute bottom-0 left-4 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-300 group-hover:w-24"></div>
                 </div>
-                <div className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer">
-                  <Link to="/partner/login" className="block w-full" onClick={() => setLoginOpen(false)}>
-                    Login as Partner
-                  </Link>
+                <div 
+                  className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer"
+                  onClick={() => {
+                    setLoginOpen(false);
+                    navigate('/partner/login');
+                  }}
+                >
+                  <span className="block w-full">Login as Partner</span>
                   <div className="absolute bottom-0 left-4 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-300 group-hover:w-24"></div>
                 </div>
               </div>
@@ -186,16 +195,24 @@ const Navbar = () => {
                 onMouseEnter={handleRegisterMouseEnter}
                 onMouseLeave={handleRegisterMouseLeave}
               >
-                <div className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer">
-                  <Link to="/signup" className="block w-full" onClick={() => setRegisterOpen(false)}>
-                    Register as Member
-                  </Link>
+                <div 
+                  className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer"
+                  onClick={() => {
+                    setRegisterOpen(false);
+                    navigate('/signup');
+                  }}
+                >
+                  <span className="block w-full">Register as Member</span>
                   <div className="absolute bottom-0 left-4 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-300 group-hover:w-28"></div>
                 </div>
-                <div className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer">
-                  <Link to="/partner/register" className="block w-full" onClick={() => setRegisterOpen(false)}>
-                    Register as Partner
-                  </Link>
+                <div 
+                  className="relative px-4 py-2 text-sm transition-colors duration-150 group cursor-pointer"
+                  onClick={() => {
+                    setRegisterOpen(false);
+                    navigate('/partner/register');
+                  }}
+                >
+                  <span className="block w-full">Register as Partner</span>
                   <div className="absolute bottom-0 left-4 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-300 group-hover:w-28"></div>
                 </div>
               </div>

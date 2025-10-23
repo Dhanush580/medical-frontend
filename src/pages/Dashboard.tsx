@@ -974,23 +974,24 @@ const Dashboard = () => {
                         key={visit.id || idx} 
                         className="p-3 sm:p-4 border rounded-lg sm:rounded-xl hover:shadow-md transition-all duration-200 bg-white"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
+                        <div className="flex flex-col gap-3">
                           <div className="flex gap-3 sm:gap-4 items-start">
                             <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg sm:rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
                               <MapPin className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-600" />
                             </div>
-                            <div>
-                              <div className="font-semibold text-base sm:text-lg mb-1">{visit.facility}</div>
-                              <div className="text-muted-foreground text-sm sm:text-base mb-1 sm:mb-2">{visit.service}</div>
+                            <div className="flex-1">
+                              <div className="font-semibold text-base sm:text-lg mb-1">{visit.hospitalName}</div>
+                              <div className="text-sm sm:text-base text-muted-foreground mb-1">
+                                <span className="font-medium">Doctor:</span> {visit.doctorName}
+                              </div>
+                              <div className="text-sm sm:text-base text-muted-foreground mb-2">
+                                <span className="font-medium">Address:</span> {visit.address}
+                              </div>
                               <div className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1 sm:gap-2">
                                 <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-                                {visit.date}
+                                Visited on {visit.visitedTime}
                               </div>
                             </div>
-                          </div>
-                          <div className="text-left sm:text-right">
-                            <div className="text-xs sm:text-sm text-muted-foreground">You Saved</div>
-                            <div className="font-bold text-base sm:text-lg text-green-600">{visit.discount}</div>
                           </div>
                         </div>
                       </div>

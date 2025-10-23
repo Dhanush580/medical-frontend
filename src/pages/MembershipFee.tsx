@@ -42,6 +42,7 @@ const MembershipFee = () => {
     features: [
       "Single Member Coverage",
       "Up to 25% Savings on Medical Bills",
+      "Free Dental Consultation (Unlimited Visits)",
       "Access to All Partner Doctors",
       "Pharmacy Discounts",
       "Diagnostic Center Savings",

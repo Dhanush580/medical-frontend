@@ -108,6 +108,12 @@ const FAQ = () => {
       question: "How do I search for partner facilities?",
       answer: "Use our search feature on the website. You can search by: 1) Service type (Doctor/Pharmacy/Diagnostic), 2) Location or city, 3) Specialty or service needed. The results will show verified partners with complete details including address, timings, and contact information.",
       category: "usage"
+    },
+    {
+      id: 13,
+      question: "Do I get free dental consultation with my membership?",
+      answer: "Yes! All MCS members receive unlimited free dental consultations throughout the year. This benefit is available at our partner dental clinics and covers consultation, diagnosis, and treatment planning. Simply show your digital membership card at any verified dental partner to avail this benefit. This applies to all family members covered under your plan.",
+      category: "usage"
     }
   ];
 

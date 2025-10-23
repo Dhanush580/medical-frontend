@@ -50,12 +50,41 @@ const Admin = () => {
   const [viewDialogOpen, setViewDialogOpen] = React.useState(false);
   const [selectedQuery, setSelectedQuery] = React.useState<any>(null);
   const [searchTerm, setSearchTerm] = React.useState("");
+
+  // Pagination and data for all users/partners
+  const [allUsers, setAllUsers] = React.useState<any[]>([]);
+  const [allPartners, setAllPartners] = React.useState<any[]>([]);
+  const [usersPagination, setUsersPagination] = React.useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalUsers: 0,
+    hasNextPage: false,
+    hasPrevPage: false
+  });
+  const [partnersPagination, setPartnersPagination] = React.useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalPartners: 0,
+    hasNextPage: false,
+    hasPrevPage: false
+  });
+  const [usersSearch, setUsersSearch] = React.useState("");
+  const [partnersSearch, setPartnersSearch] = React.useState("");
+
+  // Delete confirmation dialogs
+  const [deletePartnerDialog, setDeletePartnerDialog] = React.useState(false);
+  const [deleteUserDialog, setDeleteUserDialog] = React.useState(false);
+  const [partnerToDelete, setPartnerToDelete] = React.useState<any>(null);
+  const [userToDelete, setUserToDelete] = React.useState<any>(null);
   
-  const BACKEND_ORIGIN = (import.meta.env.VITE_BACKEND_URL as string) || `${window.location.protocol}//${window.location.hostname}:5000`;
+  const BACKEND_ORIGIN = (import.meta.env.VITE_API_BASE_URL as string) || `${window.location.protocol}//${window.location.hostname}:5000`;
   const assetUrl = (p?: string) => {
     if (!p) return '';
+    // If it's already a data URL (base64), return as-is
+    if (p.startsWith('data:')) return p;
     if (p.startsWith('http://') || p.startsWith('https://')) return p;
-    const path = p.startsWith('/') ? p.slice(1) : p;
+    // Ensure the path starts with uploads/ for proper static serving
+    const path = p.startsWith('uploads/') ? p : (p.startsWith('/') ? p.slice(1) : p);
     return `${BACKEND_ORIGIN}/${path}`;
   };
 
@@ -137,6 +166,36 @@ const Admin = () => {
     }
   };
 
+  const loadAllUsers = async (page: number = 1, search: string = "") => {
+    try {
+      const token = localStorage.getItem('token');
+      const params = new URLSearchParams({ page: page.toString(), limit: '10' });
+      if (search) params.append('search', search);
+      const res = await fetch(apiUrl(`api/partners/all-users?${params}`), { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      setAllUsers(data.users);
+      setUsersPagination(data.pagination);
+    } catch (err) {
+      console.error('Load all users error:', err);
+    }
+  };
+
+  const loadAllPartners = async (page: number = 1, search: string = "") => {
+    try {
+      const token = localStorage.getItem('token');
+      const params = new URLSearchParams({ page: page.toString(), limit: '10' });
+      if (search) params.append('search', search);
+      const res = await fetch(apiUrl(`api/partners/all-partners?${params}`), { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      setAllPartners(data.partners);
+      setPartnersPagination(data.pagination);
+    } catch (err) {
+      console.error('Load all partners error:', err);
+    }
+  };
+
   React.useEffect(() => {
     loadApplications();
     loadStats();
@@ -144,6 +203,8 @@ const Admin = () => {
     loadRecentPartners();
     loadQueries();
     loadQueryStats();
+    loadAllUsers();
+    loadAllPartners();
   }, []);
 
   // Action functions (same as before)
@@ -201,6 +262,46 @@ const Admin = () => {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const deletePartner = async (id: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(apiUrl(`api/partners/partners/${id}`), {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        loadAllPartners();
+        loadStats();
+        setDeletePartnerDialog(false);
+        setPartnerToDelete(null);
+      }
+    } catch (err) {
+      console.error('Delete partner error:', err);
+    }
+  };
+
+  const deleteUser = async (id: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(apiUrl(`api/partners/users/${id}`), {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        loadAllUsers();
+        loadStats();
+        setDeleteUserDialog(false);
+        setUserToDelete(null);
+      }
+    } catch (err) {
+      console.error('Delete user error:', err);
     }
   };
 
@@ -426,13 +527,17 @@ const Admin = () => {
                                     alt="passport" 
                                     className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-cover rounded cursor-pointer border hover:shadow-md transition-all"
                                     onClick={() => openViewer(assetUrl(app.passportPhoto))}
+                                    onError={(e) => {
+                                      e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
+                                      e.currentTarget.alt = 'Image not available';
+                                    }}
                                   />
                                 )}
                                 {app.certificateFile && (
-                                  app.certificateFile.toLowerCase().endsWith('.pdf') ? (
-                                    <a 
-                                      href={assetUrl(app.certificateFile)} 
-                                      target="_blank" 
+                                  app.certificateFile.includes('application/pdf') || app.certificateFile.toLowerCase().includes('.pdf') ? (
+                                    <a
+                                      href={assetUrl(app.certificateFile)}
+                                      target="_blank"
                                       rel="noreferrer"
                                       className="flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2 border rounded text-xs hover:bg-blue-50 transition-colors"
                                     >
@@ -441,11 +546,15 @@ const Admin = () => {
                                       <span className="xs:hidden">PDF</span>
                                     </a>
                                   ) : (
-                                    <img 
-                                      src={assetUrl(app.certificateFile)} 
-                                      alt="certificate" 
+                                    <img
+                                      src={assetUrl(app.certificateFile)}
+                                      alt="certificate"
                                       className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-cover rounded cursor-pointer border hover:shadow-md transition-all"
                                       onClick={() => openViewer(assetUrl(app.certificateFile))}
+                                      onError={(e) => {
+                                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
+                                        e.currentTarget.alt = 'Image not available';
+                                      }}
                                     />
                                   )
                                 )}
@@ -456,6 +565,10 @@ const Admin = () => {
                                     alt={`clinic-${i}`} 
                                     className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-cover rounded cursor-pointer border hover:shadow-md transition-all"
                                     onClick={() => openViewer(assetUrl(p))}
+                                    onError={(e) => {
+                                      e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
+                                      e.currentTarget.alt = 'Image not available';
+                                    }}
                                   />
                                 ))}
                               </div>
@@ -601,35 +714,63 @@ const Admin = () => {
                   <div className="p-1 sm:p-2 bg-green-100 rounded-lg">
                     <Building2 className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
                   </div>
-                  <div>
-                    <CardTitle className="text-xl sm:text-2xl">Manage Partners</CardTitle>
+                  <div className="flex-1">
+                    <CardTitle className="text-xl sm:text-2xl">Active Partners</CardTitle>
                     <CardDescription className="text-sm sm:text-base">
-                      View and manage all healthcare partners
+                      View all active healthcare partners ({partnersPagination.totalPartners} total)
                     </CardDescription>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search partners by name, clinic name, email, or facility type..."
+                      value={partnersSearch}
+                      onChange={(e) => {
+                        setPartnersSearch(e.target.value);
+                        loadAllPartners(1, e.target.value);
+                      }}
+                      className="pl-10"
+                    />
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-4 sm:pt-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {recentPartners.map((partner, idx) => (
-                    <Card key={idx} className="border-muted-foreground/20 hover:shadow-md transition-all duration-200">
+                  {allPartners.map((partner, idx) => (
+                    <Card key={partner._id || idx} className="border-muted-foreground/20 hover:shadow-md transition-all duration-200">
                       <CardContent className="p-3 sm:p-4 lg:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                           <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
                             <div className="flex items-center gap-2 sm:gap-3">
-                              <h3 className="font-semibold text-base sm:text-lg truncate">{partner.name}</h3>
+                              <h3 className="font-semibold text-base sm:text-lg truncate">{partner.name || partner.clinicName}</h3>
                               <Badge variant="outline" className="capitalize bg-green-50 text-green-700 border-green-200 text-xs">
-                                {partner.type}
+                                {partner.facilityType || partner.type}
                               </Badge>
                             </div>
                             <div className="text-xs sm:text-sm text-muted-foreground">
-                              {partner.members.toLocaleString()} members served
+                              {partner.email || partner.contactEmail} • {partner.contactPhone || partner.phone || 'N/A'}
+                            </div>
+                            <div className="text-xs sm:text-sm text-muted-foreground">
+                              {partner.address} • {partner.membersServed || 0} members served
+                            </div>
+                            <div className="text-xs sm:text-sm text-muted-foreground">
+                              Joined {new Date(partner.createdAt).toLocaleDateString()}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <Badge variant="secondary" className="text-xs">{partner.status}</Badge>
-                            <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-                              Manage
+                            <Button 
+                              variant="destructive" 
+                              size="sm" 
+                              className="text-xs sm:text-sm"
+                              onClick={() => {
+                                setPartnerToDelete(partner);
+                                setDeletePartnerDialog(true);
+                              }}
+                            >
+                              <XCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                              Remove
                             </Button>
                           </div>
                         </div>
@@ -637,9 +778,36 @@ const Admin = () => {
                     </Card>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full mt-4 sm:mt-6 text-sm">
-                  View All Partners
-                </Button>
+
+                {/* Pagination */}
+                {partnersPagination.totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-6">
+                    <div className="text-sm text-muted-foreground">
+                      Showing {((partnersPagination.currentPage - 1) * 10) + 1} to {Math.min(partnersPagination.currentPage * 10, partnersPagination.totalPartners)} of {partnersPagination.totalPartners} partners
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loadAllPartners(partnersPagination.currentPage - 1, partnersSearch)}
+                        disabled={!partnersPagination.hasPrevPage}
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-sm text-muted-foreground px-2">
+                        Page {partnersPagination.currentPage} of {partnersPagination.totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loadAllPartners(partnersPagination.currentPage + 1, partnersSearch)}
+                        disabled={!partnersPagination.hasNextPage}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -652,34 +820,61 @@ const Admin = () => {
                   <div className="p-1 sm:p-2 bg-purple-100 rounded-lg">
                     <Users className="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" />
                   </div>
-                  <div>
-                    <CardTitle className="text-xl sm:text-2xl">Manage Users</CardTitle>
+                  <div className="flex-1">
+                    <CardTitle className="text-xl sm:text-2xl">All Users</CardTitle>
                     <CardDescription className="text-sm sm:text-base">
-                      View and manage all platform users
+                      View and manage all platform users ({usersPagination.totalUsers} total)
                     </CardDescription>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search users by name, email, or membership ID..."
+                      value={usersSearch}
+                      onChange={(e) => {
+                        setUsersSearch(e.target.value);
+                        loadAllUsers(1, e.target.value);
+                      }}
+                      className="pl-10"
+                    />
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-4 sm:pt-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {recentMembers.map((member, idx) => (
-                    <Card key={idx} className="border-muted-foreground/20 hover:shadow-md transition-all duration-200">
+                  {allUsers.map((user, idx) => (
+                    <Card key={user._id || idx} className="border-muted-foreground/20 hover:shadow-md transition-all duration-200">
                       <CardContent className="p-3 sm:p-4 lg:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                           <div className="space-y-1 sm:space-y-2 min-w-0 flex-1">
-                            <h3 className="font-semibold text-base sm:text-lg truncate">{member.name}</h3>
-                            <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-                                {member.date}
-                              </div>
-                              <Badge variant="outline" className="text-xs">{member.plan}</Badge>
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <h3 className="font-semibold text-base sm:text-lg truncate">{user.name}</h3>
+                              <Badge variant="outline" className="capitalize bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                                {user.plan}
+                              </Badge>
+                            </div>
+                            <div className="text-xs sm:text-sm text-muted-foreground">
+                              {user.email} • {user.membershipId}
+                            </div>
+                            <div className="text-xs sm:text-sm text-muted-foreground">
+                              Joined {new Date(user.createdAt).toLocaleDateString()} • Valid until {new Date(user.validUntil).toLocaleDateString()}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <Badge variant="secondary" className="text-xs">{member.status}</Badge>
-                            <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-                              Manage
+                            <Badge variant="secondary" className="text-xs">Active</Badge>
+                            <Button 
+                              variant="destructive" 
+                              size="sm" 
+                              className="text-xs sm:text-sm"
+                              onClick={() => {
+                                setUserToDelete(user);
+                                setDeleteUserDialog(true);
+                              }}
+                            >
+                              <XCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                              Remove
                             </Button>
                           </div>
                         </div>
@@ -687,9 +882,36 @@ const Admin = () => {
                     </Card>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full mt-4 sm:mt-6 text-sm">
-                  View All Users
-                </Button>
+
+                {/* Pagination */}
+                {usersPagination.totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-6">
+                    <div className="text-sm text-muted-foreground">
+                      Showing {((usersPagination.currentPage - 1) * 10) + 1} to {Math.min(usersPagination.currentPage * 10, usersPagination.totalUsers)} of {usersPagination.totalUsers} users
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loadAllUsers(usersPagination.currentPage - 1, usersSearch)}
+                        disabled={!usersPagination.hasPrevPage}
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-sm text-muted-foreground px-2">
+                        Page {usersPagination.currentPage} of {usersPagination.totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => loadAllUsers(usersPagination.currentPage + 1, usersSearch)}
+                        disabled={!usersPagination.hasNextPage}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -858,6 +1080,10 @@ const Admin = () => {
                         alt="passport" 
                         className="h-24 w-24 sm:h-32 sm:w-32 object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
                         onClick={() => openViewer(assetUrl(selectedApp.passportPhoto))}
+                        onError={(e) => {
+                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
+                          e.currentTarget.alt = 'Image not available';
+                        }}
                       />
                     ) : (
                       <div className="text-xs sm:text-sm text-muted-foreground">No passport image uploaded</div>
@@ -867,7 +1093,7 @@ const Admin = () => {
                   <div>
                     <h4 className="font-semibold mb-1 sm:mb-2 text-xs sm:text-sm text-muted-foreground">Certificate</h4>
                     {selectedApp.certificateFile ? (
-                      selectedApp.certificateFile.toLowerCase().endsWith('.pdf') ? (
+                      selectedApp.certificateFile.includes('application/pdf') || selectedApp.certificateFile.toLowerCase().endsWith('.pdf') ? (
                         <a 
                           href={assetUrl(selectedApp.certificateFile)} 
                           target="_blank" 
@@ -883,6 +1109,10 @@ const Admin = () => {
                           alt="certificate" 
                           className="h-24 w-32 sm:h-32 sm:w-48 object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
                           onClick={() => openViewer(assetUrl(selectedApp.certificateFile))}
+                          onError={(e) => {
+                            e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
+                            e.currentTarget.alt = 'Image not available';
+                          }}
                         />
                       )
                     ) : (
@@ -901,6 +1131,10 @@ const Admin = () => {
                             alt={`clinic-${index + 1}`} 
                             className="h-16 sm:h-20 w-full object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
                             onClick={() => openViewer(assetUrl(photo))}
+                            onError={(e) => {
+                              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
+                              e.currentTarget.alt = 'Image not available';
+                            }}
                           />
                         ))}
                       </div>
@@ -963,7 +1197,15 @@ const Admin = () => {
           </DialogHeader>
           <div className="flex justify-center items-center min-h-[50vh] sm:min-h-[60vh]">
             {viewerImage && (
-              <img src={viewerImage} alt="preview" className="max-h-[50vh] sm:max-h-[60vh] max-w-full object-contain rounded-lg" />
+              <img 
+                src={viewerImage} 
+                alt="preview" 
+                className="max-h-[50vh] sm:max-h-[60vh] max-w-full object-contain rounded-lg" 
+                onError={(e) => {
+                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
+                  e.currentTarget.alt = 'Image not available';
+                }}
+              />
             )}
           </div>
           <DialogFooter>
@@ -1017,6 +1259,74 @@ const Admin = () => {
               </DialogFooter>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Partner Confirmation Dialog */}
+      <Dialog open={deletePartnerDialog} onOpenChange={setDeletePartnerDialog}>
+        <DialogContent className="max-w-md mx-2 sm:mx-4">
+          <DialogHeader>
+            <DialogTitle className="text-lg sm:text-xl text-red-600">Delete Partner</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
+              Are you sure you want to delete this partner? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          {partnerToDelete && (
+            <div className="py-4">
+              <div className="space-y-2">
+                <div className="font-semibold">{partnerToDelete.name || partnerToDelete.clinicName}</div>
+                <div className="text-sm text-muted-foreground">{partnerToDelete.email || partnerToDelete.contactEmail}</div>
+                <div className="text-sm text-muted-foreground">{partnerToDelete.facilityType || partnerToDelete.type}</div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => { setDeletePartnerDialog(false); setPartnerToDelete(null); }} className="text-sm w-full sm:w-auto">
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => partnerToDelete && deletePartner(partnerToDelete._id)}
+              className="text-sm w-full sm:w-auto"
+            >
+              <XCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              Delete Partner
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Confirmation Dialog */}
+      <Dialog open={deleteUserDialog} onOpenChange={setDeleteUserDialog}>
+        <DialogContent className="max-w-md mx-2 sm:mx-4">
+          <DialogHeader>
+            <DialogTitle className="text-lg sm:text-xl text-red-600">Delete User</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base">
+              Are you sure you want to delete this user? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          {userToDelete && (
+            <div className="py-4">
+              <div className="space-y-2">
+                <div className="font-semibold">{userToDelete.name}</div>
+                <div className="text-sm text-muted-foreground">{userToDelete.email}</div>
+                <div className="text-sm text-muted-foreground">Membership: {userToDelete.membershipId}</div>
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => { setDeleteUserDialog(false); setUserToDelete(null); }} className="text-sm w-full sm:w-auto">
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => userToDelete && deleteUser(userToDelete._id)}
+              className="text-sm w-full sm:w-auto"
+            >
+              <XCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              Delete User
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

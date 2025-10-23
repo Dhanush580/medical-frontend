@@ -37,8 +37,8 @@ const AboutUs = () => {
     },
     {
       icon: <Award className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
-      title: "Annual Membership",
-      description: "Comprehensive coverage for just ₹365/year - less than ₹1 per day for quality healthcare access."
+      title: "Free Dental Consultation",
+      description: "Unlimited free dental consultations throughout the year for all verified members and their families."
     }
   ];
 

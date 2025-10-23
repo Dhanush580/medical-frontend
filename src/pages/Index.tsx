@@ -59,10 +59,10 @@ const Index = () => {
       features: [
         "Single member coverage",
         "Up to 25% savings",
+        "Free dental consultation (unlimited visits throughout the year)",
         "All partner facilities",
         "Digital membership card",
-        "24/7 support",
-        "Free dental consultation for all verified members"
+        "24/7 support"
       ]
     },
     {
@@ -87,11 +87,11 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>MEDI COST SAVER - Affordable Healthcare Discount Cards | Save Up to 25%</title>
-        <meta name="description" content="Get up to 25% discount on healthcare services with MEDI COST SAVER. Join India's largest healthcare discount network with 1000+ verified partners. ₹365/year for family coverage." />
-        <meta name="keywords" content="healthcare discount card India, medical savings, hospital discount, pharmacy discount, doctor consultation discount, healthcare membership India, medical insurance alternative" />
-        <meta property="og:title" content="MEDI COST SAVER - Affordable Healthcare for Every Indian Family" />
-        <meta property="og:description" content="Save up to 25% on medical bills, pharmacy purchases, and diagnostic tests. Join 1000+ verified healthcare partners nationwide." />
+        <title>MEDI COST SAVER - Affordable Healthcare Discount Cards | Free Dental Consultation | Save Up to 25%</title>
+        <meta name="description" content="Get up to 25% discount on healthcare services with MEDI COST SAVER. Join India's largest healthcare discount network with 1000+ verified partners and unlimited free dental consultations. ₹365/year for family coverage." />
+        <meta name="keywords" content="healthcare discount card India, medical savings, hospital discount, pharmacy discount, doctor consultation discount, free dental consultation, unlimited dental care, healthcare membership India, medical insurance alternative" />
+        <meta property="og:title" content="MEDI COST SAVER - Affordable Healthcare for Every Indian Family | Free Dental Consultation" />
+        <meta property="og:description" content="Save up to 25% on medical bills, pharmacy purchases, and diagnostic tests. Get unlimited free dental consultations throughout the year. Join 1000+ verified healthcare partners nationwide." />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://medicostsaver.com/og-image.jpg" />
         <link rel="canonical" href="https://medicostsaver.com/" />

@@ -57,8 +57,8 @@ const HowItWorks = () => {
       icon: <FileText className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />,
       step: "04",
       title: "Avail Discounts",
-      description: "Show your MCS digital card at partner facilities and save up to 25% on medical bills, pharmacy purchases, and diagnostic tests.",
-      features: ["Up to 25% Savings", "Instant Discounts", "No Hidden Charges"],
+      description: "Show your MCS digital card at partner facilities and save up to 25% on medical bills, pharmacy purchases, and diagnostic tests. Plus enjoy unlimited free dental consultations throughout the year.",
+      features: ["Up to 25% Savings", "Free Dental Consultations (Unlimited)", "Instant Discounts", "No Hidden Charges"],
       color: "from-orange-500 to-orange-600"
     }
   ];
@@ -78,7 +78,7 @@ const HowItWorks = () => {
     },
     {
       icon: <Star className="w-5 h-5 sm:w-6 sm:h-6" />,
-      text: "24/7 Customer Support"
+      text: "Free Dental Consultation (Unlimited)"
     }
   ];
 
@@ -282,6 +282,10 @@ const HowItWorks = () => {
                 </li>
                 <li className="flex items-center gap-2 sm:gap-3">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
+                  <span className="text-sm sm:text-base">Free Dental Consultation (Unlimited)</span>
+                </li>
+                <li className="flex items-center gap-2 sm:gap-3">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
                   <span className="text-sm sm:text-base">All Partner Facilities</span>
                 </li>
               </ul>
@@ -306,6 +310,10 @@ const HowItWorks = () => {
                 <li className="flex items-center gap-2 sm:gap-3">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
                   <span className="text-sm sm:text-base">Up to 25% Savings</span>
+                </li>
+                <li className="flex items-center gap-2 sm:gap-3">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
+                  <span className="text-sm sm:text-base">Free Dental Consultation (Unlimited)</span>
                 </li>
                 <li className="flex items-center gap-2 sm:gap-3">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 flex-shrink-0" />
