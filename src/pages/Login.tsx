@@ -7,6 +7,9 @@ import { Heart, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiUrl } from "@/lib/api";
 import Navbar from "@/components/Navbar";
+import { Helmet } from "react-helmet-async";
+import { useToast } from "@/hooks/use-toast";
+import LoadingSpinner from "@/components/ui/loading";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +18,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,18 +33,30 @@ const Login = () => {
       
       if (!res.ok) {
         const err = await res.json();
-        alert(err.message || 'Login failed');
+        toast({
+          title: "Login Failed",
+          description: err.message || 'Please check your credentials and try again.',
+          variant: "destructive",
+        });
         return;
       }
       
       const data = await res.json();
       if (data.token) {
         localStorage.setItem('token', data.token);
+        toast({
+          title: "Login Successful",
+          description: "Welcome back! Redirecting to your dashboard...",
+        });
         navigate('/dashboard');
       }
     } catch (err) {
       console.error(err);
-      alert('Login error');
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -48,6 +64,15 @@ const Login = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Login | MEDI COST SAVER - Access Your Healthcare Account</title>
+        <meta name="description" content="Login to your MEDI COST SAVER account to access healthcare discounts, view your membership card, and manage your medical savings benefits." />
+        <meta name="keywords" content="MEDI COST SAVER login, healthcare account login, medical discount card login, member login India" />
+        <meta property="og:title" content="Login to MEDI COST SAVER - Healthcare Account Access" />
+        <meta property="og:description" content="Access your healthcare discount account and manage your medical savings benefits." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://medicostsaver.com/login" />
+      </Helmet>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-emerald-50 to-cyan-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md mx-auto">
@@ -59,7 +84,7 @@ const Login = () => {
               </div>
               <div className="text-left">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-black bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
-                  HealthConnect
+                  MEDI COST SAVER
                 </h1>
                 <p className="text-gray-600 text-xs sm:text-sm mt-0.5 sm:mt-1">Your Health Partner</p>
               </div>
@@ -145,7 +170,7 @@ const Login = () => {
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <LoadingSpinner size="sm" />
                       <span className="text-sm sm:text-base">Signing In...</span>
                     </div>
                   ) : (

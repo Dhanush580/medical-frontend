@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -52,16 +54,20 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <RouterProvider
-        router={router}
-        future={{ v7_startTransition: true }}
-      />
-    </TooltipProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <ErrorBoundary>
+          <RouterProvider
+            router={router}
+            future={{ v7_startTransition: true }}
+          />
+        </ErrorBoundary>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

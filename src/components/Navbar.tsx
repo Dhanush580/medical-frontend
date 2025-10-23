@@ -77,7 +77,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             <Heart className="h-6 w-6 md:h-8 md:w-8 text-primary" />
             <span className="text-lg md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              HealthConnect
+              MEDI COST SAVER
             </span>
           </div>
 
@@ -250,7 +250,7 @@ const Navbar = () => {
               <div className="flex items-center gap-2">
                 <Heart className="h-6 w-6 text-primary" />
                 <span className="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  HealthConnect
+                  MEDI COST SAVER
                 </span>
               </div>
               <Button

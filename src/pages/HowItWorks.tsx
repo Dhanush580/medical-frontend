@@ -11,6 +11,7 @@ import {
   Star,
   Heart
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 const HowItWorks = () => {
   const fadeInUp = {
@@ -82,7 +83,17 @@ const HowItWorks = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-16 lg:py-20">
+    <>
+      <Helmet>
+        <title>How It Works | MEDI COST SAVER - Healthcare Discount Process</title>
+        <meta name="description" content="Learn how MEDI COST SAVER healthcare discount cards work. Simple 4-step process to get medical savings at 100+ partner hospitals, clinics, and pharmacies across India." />
+        <meta name="keywords" content="how MEDI COST SAVER works, healthcare discount process, medical savings card, discount card registration, healthcare membership steps" />
+        <meta property="og:title" content="How MEDI COST SAVER Works - Healthcare Discount Process" />
+        <meta property="og:description" content="Discover the simple process to get healthcare savings with MEDI COST SAVER discount cards. 4 easy steps to affordable medical care." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://medicostsaver.com/how-it-works" />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-16 lg:py-20">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
@@ -341,7 +352,7 @@ const HowItWorks = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
           >
-            <Link to="/membership" className="w-full sm:w-auto">
+            <Link to="/signup" className="w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -363,6 +374,7 @@ const HowItWorks = () => {
         </div>
       </motion.section>
     </div>
+    </>
   );
 };
 

@@ -39,7 +39,7 @@ const Partner = () => {
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-600 to-emerald-600 flex items-center justify-center">
               <Heart className="h-8 w-8 text-white" />
             </div>
-            <CardTitle className="text-3xl font-bold text-gray-900">HealthConnect</CardTitle>
+            <CardTitle className="text-3xl font-bold text-gray-900">MEDI COST SAVER</CardTitle>
             <CardDescription className="text-gray-600 text-lg">
               Partner Portal
             </CardDescription>

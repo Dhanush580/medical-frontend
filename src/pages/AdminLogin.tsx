@@ -7,9 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiUrl } from "@/lib/api";
 import Navbar from "@/components/Navbar";
+import { useToast } from "@/hooks/use-toast";
+import LoadingSpinner from "@/components/ui/loading";
+import { Helmet } from "react-helmet-async";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [email, setEmail] = React.useState('admin@local.test');
   const [password, setPassword] = React.useState('admin123');
   const [error, setError] = React.useState<string | null>(null);
@@ -27,21 +31,37 @@ const AdminLogin = () => {
       });
       const body = await res.json();
       if (!res.ok) {
-        setError(body?.message || 'Login failed');
+        toast({
+          title: "Login Failed",
+          description: body?.message || 'Please check your credentials.',
+          variant: "destructive",
+        });
         setLoading(false);
         return;
       }
       const token = body.token;
       if (!token) {
-        setError('No token returned');
+        toast({
+          title: "Login Error",
+          description: 'Authentication failed. Please try again.',
+          variant: "destructive",
+        });
         setLoading(false);
         return;
       }
       localStorage.setItem('token', token);
+      toast({
+        title: "Login Successful",
+        description: "Welcome back, Admin!",
+      });
       navigate('/admin');
     } catch (err) {
       console.error(err);
-      setError('Network error');
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the server. Please check your internet connection.",
+        variant: "destructive",
+      });
       setLoading(false);
     }
   };
@@ -85,7 +105,14 @@ const AdminLogin = () => {
                 </Alert>
               )}
               <Button type="submit" className="w-full text-sm sm:text-base" disabled={loading}>
-                {loading ? 'Logging in...' : 'Login'}
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <LoadingSpinner size="sm" />
+                    <span>Logging in...</span>
+                  </div>
+                ) : (
+                  'Login'
+                )}
               </Button>
             </form>
             <div className="mt-3 sm:mt-4 text-center">

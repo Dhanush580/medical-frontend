@@ -61,7 +61,7 @@ const PartnerLogin = () => {
               </div>
               <div className="text-left">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-black bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
-                  HealthConnect
+                  MEDI COST SAVER
                 </h1>
                 <p className="text-gray-600 text-xs sm:text-sm mt-0.5 sm:mt-1">Partner Portal</p>
               </div>

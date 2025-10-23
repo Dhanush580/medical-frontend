@@ -255,7 +255,7 @@ const PartnerRegister = () => {
                   <div>
                     <h4 className="font-semibold text-amber-800 text-xs sm:text-sm">Mandatory Discount on Total Bill</h4>
                     <p className="text-amber-700 text-xs sm:text-sm mt-1">
-                      Every partner must provide some discount on the total bill for all HealthConnect members
+                      Every partner must provide some discount on the total bill for all MEDI COST SAVER members
                     </p>
                   </div>
                 </div>
@@ -273,7 +273,7 @@ const PartnerRegister = () => {
                   <div>
                     <h4 className="font-semibold text-amber-800 text-xs sm:text-sm">Dentist Requirements</h4>
                     <p className="text-amber-700 text-xs sm:text-sm mt-1">
-                      Dentists must provide free consultation for HealthConnect members
+                      Dentists must provide free consultation for MEDI COST SAVER members
                     </p>
                   </div>
                 </div>
@@ -871,7 +871,7 @@ const PartnerRegister = () => {
                       placeholder="e.g., 10% off, ₹500 off, etc."
                       className="transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
                     />
-                    <p className="text-xs text-gray-500">Specify the discount you are willing to provide to HealthConnect members</p>
+                    <p className="text-xs text-gray-500">Specify the discount you are willing to provide to MEDI COST SAVER members</p>
                   </div>
                   
                   <div className="space-y-3 sm:space-y-4">

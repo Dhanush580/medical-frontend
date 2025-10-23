@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Search, 
   Plus, 
@@ -13,8 +14,10 @@ import {
   ArrowRight,
   MessageCircle
 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 const FAQ = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("all");
   const [openItems, setOpenItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -132,7 +135,17 @@ const FAQ = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 sm:py-16 md:py-20">
+    <>
+      <Helmet>
+        <title>FAQ | MEDI COST SAVER - Healthcare Discount Card Questions</title>
+        <meta name="description" content="Find answers to frequently asked questions about MEDI COST SAVER healthcare discount cards. Learn about membership, savings, partnerships, and how our medical discount service works." />
+        <meta name="keywords" content="MEDI COST SAVER FAQ, healthcare discount questions, medical savings FAQ, discount card help, healthcare membership questions" />
+        <meta property="og:title" content="MEDI COST SAVER FAQ - Healthcare Discount Card Questions" />
+        <meta property="og:description" content="Get answers to all your questions about healthcare discount cards, medical savings, and MEDI COST SAVER membership." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://medicostsaver.com/faq" />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 sm:py-16 md:py-20">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
@@ -350,6 +363,7 @@ const FAQ = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/contact')}
               className="bg-white text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-bold hover:bg-gray-100 transition-colors"
             >
               Contact Support
@@ -357,6 +371,7 @@ const FAQ = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => window.location.href = 'tel:+91-XXXXX-XXXXX'}
               className="border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
             >
               Call +91-XXXXX-XXXXX
@@ -365,6 +380,7 @@ const FAQ = () => {
         </div>
       </motion.section>
     </div>
+    </>
   );
 };
 

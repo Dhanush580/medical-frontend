@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { Heart, Shield, Users, Award, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const AboutUs = () => {
+  const navigate = useNavigate();
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
     animate: { opacity: 1, y: 0 },
@@ -47,7 +50,17 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-20 pb-8 md:pb-12">
+    <>
+      <Helmet>
+        <title>About Us | MEDI COST SAVER - Healthcare Savings Made Affordable</title>
+        <meta name="description" content="Learn about MEDI COST SAVER's mission to make healthcare affordable for every Indian family. Discover our healthcare discount network, verified partners, and commitment to quality medical care." />
+        <meta name="keywords" content="about MEDI COST SAVER, healthcare discount card, medical savings India, affordable healthcare, healthcare network India" />
+        <meta property="og:title" content="About MEDI COST SAVER - Making Healthcare Affordable" />
+        <meta property="og:description" content="Revolutionizing healthcare accessibility by connecting members with trusted medical professionals across India for significant savings." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://medicostsaver.com/about" />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-20 pb-8 md:pb-12">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
@@ -94,7 +107,7 @@ const AboutUs = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.href = '/membership'}
+              onClick={() => navigate('/signup')}
               className="w-full sm:w-auto bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg font-semibold text-sm md:text-base flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
             >
               Get Your Card Now
@@ -247,7 +260,7 @@ const AboutUs = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.href = '/membership'}
+              onClick={() => navigate('/signup')}
               className="w-full sm:w-auto bg-white text-blue-600 px-6 md:px-8 py-3 md:py-4 rounded-lg font-bold text-base md:text-lg hover:bg-gray-100 transition-colors"
             >
               Get Started - ₹365/Year
@@ -256,6 +269,7 @@ const AboutUs = () => {
         </div>
       </motion.section>
     </div>
+    </>
   );
 };
 

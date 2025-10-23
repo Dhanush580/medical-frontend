@@ -14,6 +14,7 @@ import {
   BadgePercent
 } from "lucide-react";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 const MembershipFee = () => {
   const [familyMembers, setFamilyMembers] = useState(1);
@@ -96,7 +97,17 @@ const MembershipFee = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-16 lg:py-20">
+    <>
+      <Helmet>
+        <title>Membership Fee | MEDI COST SAVER - Healthcare Discount Card Pricing</title>
+        <meta name="description" content="Check MEDI COST SAVER membership fees and pricing. Individual plan ₹365/year, family plans available. Get up to 25% savings on medical expenses with our healthcare discount card." />
+        <meta name="keywords" content="MEDI COST SAVER membership fee, healthcare discount card price, medical savings cost, family healthcare plan pricing, discount card subscription" />
+        <meta property="og:title" content="MEDI COST SAVER Membership Fees - Healthcare Discount Pricing" />
+        <meta property="og:description" content="Affordable healthcare savings with MEDI COST SAVER. Individual ₹365/year, family plans available. 25% medical bill discounts." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://medicostsaver.com/membership-fee" />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-16 lg:py-20">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
@@ -440,6 +451,7 @@ const MembershipFee = () => {
         </div>
       </motion.section>
     </div>
+    </>
   );
 };
 

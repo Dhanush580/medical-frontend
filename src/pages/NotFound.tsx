@@ -70,7 +70,7 @@ const NotFound = () => {
                 className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors duration-200 group"
               >
                 <Heart className="h-4 w-4 text-rose-500 group-hover:scale-110 transition-transform duration-200" />
-                <span className="text-sm sm:text-base">Return to HealthConnect</span>
+                <span className="text-sm sm:text-base">Return to MEDI COST SAVER</span>
               </Link>
             </div>
           </div>

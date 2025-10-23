@@ -7,12 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Heart, Users, Building2, CreditCard, TrendingUp, Calendar, Stethoscope, Pill, Microscope, CheckCircle, XCircle, Search, History, UserCheck, BarChart3 } from "lucide-react";
+import { Heart, Users, Building2, CreditCard, TrendingUp, Calendar, Stethoscope, Pill, Microscope, CheckCircle, XCircle, Search, History, UserCheck, BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { apiUrl } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const PartnerDashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [partner, setPartner] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState("verify-membership");
@@ -27,14 +29,17 @@ const PartnerDashboard = () => {
     averageDiscount: '12.5%'
   });
 
-  // Mock data for recent visits - replace with actual API call
-  const [recentVisits, setRecentVisits] = React.useState([
-    { id: 1, memberName: "Rajesh Kumar", service: "Blood Test", discount: "15%", date: "Today", amount: "₹1,500" },
-    { id: 2, memberName: "Priya Sharma", service: "Consultation", discount: "10%", date: "Yesterday", amount: "₹800" },
-    { id: 3, memberName: "Amit Singh", service: "Medicine Purchase", discount: "10%", date: "2 days ago", amount: "₹2,300" },
-    { id: 4, memberName: "Sneha Patel", service: "X-Ray", discount: "15%", date: "3 days ago", amount: "₹1,200" },
-    { id: 5, memberName: "Rahul Verma", service: "Health Checkup", discount: "12%", date: "4 days ago", amount: "₹3,500" }
-  ]);
+  // Recent visits data with pagination
+  const [recentVisits, setRecentVisits] = React.useState<any[]>([]);
+  const [visitsPagination, setVisitsPagination] = React.useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalVisits: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
+    limit: 10
+  });
+  const [loadingVisits, setLoadingVisits] = React.useState(false);
 
   React.useEffect(() => {
     const token = localStorage.getItem('partnerToken');
@@ -77,9 +82,31 @@ const PartnerDashboard = () => {
     }
   };
 
+  const loadPartnerVisits = async (page = 1) => {
+    const token = localStorage.getItem('partnerToken');
+    if (!token) return;
+
+    setLoadingVisits(true);
+    try {
+      const response = await fetch(apiUrl(`api/partners/partner-visits?page=${page}&limit=10`), {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setRecentVisits(data.visits);
+        setVisitsPagination(data.pagination);
+      }
+    } catch (error) {
+      console.error('Failed to load partner visits:', error);
+    } finally {
+      setLoadingVisits(false);
+    }
+  };
+
   React.useEffect(() => {
     if (partner) {
       loadPartnerStats();
+      loadPartnerVisits();
     }
   }, [partner]);
 
@@ -95,10 +122,12 @@ const PartnerDashboard = () => {
     setVerificationResult(null);
 
     try {
+      const token = localStorage.getItem('partnerToken');
       const response = await fetch(apiUrl('api/partners/verify'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({ membershipId: membershipId.trim() }),
       });
@@ -123,11 +152,13 @@ const PartnerDashboard = () => {
     setRecordingVisit(true);
     try {
       const discountPercent = parseFloat(verificationResult.member.discount.replace('%', '')) || 0;
+      const token = localStorage.getItem('partnerToken');
 
       const response = await fetch(apiUrl('api/partners/visit'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({
           membershipId: membershipId,
@@ -139,12 +170,21 @@ const PartnerDashboard = () => {
       });
 
       if (response.ok) {
-        alert('Visit recorded successfully!');
+        // Refresh both stats and visits
+        loadPartnerStats();
+        loadPartnerVisits();
         setMembershipId('');
         setVerificationResult(null);
-        loadPartnerStats();
+        toast({
+          title: "Visit Recorded",
+          description: "The member visit has been recorded successfully.",
+        });
       } else {
-        alert('Failed to record visit. Please try again.');
+        toast({
+          title: "Recording Failed",
+          description: "Failed to record visit. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       alert('Network error. Please try again.');
@@ -203,7 +243,7 @@ const PartnerDashboard = () => {
           <Link to="/" className="flex items-center gap-2 transition-transform hover:scale-105">
             <Heart className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-              HealthConnect
+              MEDI COST SAVER
             </span>
           </Link>
           <div className="flex gap-2 sm:gap-3 items-center">
@@ -519,8 +559,31 @@ const PartnerDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent className="pt-4 sm:pt-6">
+                {loadingVisits && (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span className="ml-2 text-muted-foreground">Loading visits...</span>
+                  </div>
+                )}
                 <div className="space-y-3 sm:space-y-4">
-                  {recentVisits.map((visit) => (
+                  {!loadingVisits && (
+                  <>
+                    {recentVisits.length === 0 ? (
+                    <div className="text-center py-8 sm:py-12">
+                      <History className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No visits recorded yet</h3>
+                      <p className="text-gray-600 text-sm sm:text-base mb-4">
+                        Start by verifying member eligibility and recording their visits.
+                      </p>
+                      <Button 
+                        onClick={() => setActiveTab('verify')}
+                        className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700"
+                      >
+                        Start Recording Visits
+                      </Button>
+                    </div>
+                  ) : (
+                    recentVisits.map((visit) => (
                     <Card key={visit.id} className="border-muted-foreground/20 hover:shadow-md transition-all duration-200">
                       <CardContent className="p-3 sm:p-4 md:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
@@ -530,55 +593,100 @@ const PartnerDashboard = () => {
                             </div>
                             <div className="space-y-1 flex-1">
                               <h3 className="font-semibold text-base sm:text-lg">{visit.memberName}</h3>
-                              <p className="text-muted-foreground text-sm sm:text-base">{visit.service}</p>
+                              <p className="text-muted-foreground text-sm sm:text-base">{visit.membershipId} • {visit.service}</p>
                               <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2 text-xs sm:text-sm">
                                 <span className="text-green-600 font-medium">{visit.discount} discount</span>
-                                <span className="hidden xs:inline text-gray-400">•</span>
-                                <span className="font-medium">{visit.amount}</span>
+                                {visit.savedAmount > 0 && (
+                                  <span className="text-blue-600">• ₹{visit.savedAmount} saved</span>
+                                )}
+                              </div>
+                              <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2 text-xs sm:text-sm text-muted-foreground mt-1">
+                                {visit.email !== 'N/A' && (
+                                  <span className="flex items-center gap-1">
+                                    <span>📧</span>
+                                    <span>{visit.email}</span>
+                                  </span>
+                                )}
+                                {visit.phone !== 'N/A' && (
+                                  <span className="flex items-center gap-1">
+                                    <span>📱</span>
+                                    <span>{visit.phone}</span>
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <Badge 
-                              variant={
-                                visit.date === 'Today' ? 'default' : 
-                                visit.date === 'Yesterday' ? 'secondary' : 'outline'
-                              }
-                              className="whitespace-nowrap text-xs"
-                            >
-                              {visit.date}
+                            <Badge variant="outline" className="whitespace-nowrap text-xs">
+                              {visit.date} at {visit.time}
                             </Badge>
-                            <Button variant="outline" size="sm" className="text-xs">
-                              View Details
-                            </Button>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
-                </div>
+                  ))
+                  )}
 
-                {/* Quick Actions */}
-                <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
-                  <h4 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">Quick Actions</h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
-                      <Users className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-                      <span className="text-xs">Member Directory</span>
-                    </Button>
-                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
-                      <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-                      <span className="text-xs">Generate Reports</span>
-                    </Button>
-                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
-                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-                      <span className="text-xs">Schedule</span>
-                    </Button>
-                    <Button variant="outline" className="h-12 sm:h-16 flex flex-col gap-1 p-2">
-                      <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-                      <span className="text-xs">Analytics</span>
-                    </Button>
-                  </div>
+                  {/* Pagination Controls */}
+
+                  {/* Pagination Controls */}
+                  {visitsPagination.totalPages > 1 && (
+                    <div className="flex items-center justify-between pt-4 border-t">
+                      <div className="text-sm text-muted-foreground">
+                        Showing {recentVisits.length} of {visitsPagination.totalVisits} visits
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => loadPartnerVisits(visitsPagination.currentPage - 1)}
+                          disabled={!visitsPagination.hasPrevPage || loadingVisits}
+                          className="text-xs"
+                        >
+                          <ChevronLeft className="h-3 w-3 mr-1" />
+                          Previous
+                        </Button>
+
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: visitsPagination.totalPages }, (_, i) => i + 1)
+                            .filter(page => {
+                              const current = visitsPagination.currentPage;
+                              return page === 1 || page === visitsPagination.totalPages || 
+                                     (page >= current - 1 && page <= current + 1);
+                            })
+                            .map((page, index, array) => (
+                              <React.Fragment key={page}>
+                                {index > 0 && array[index - 1] !== page - 1 && (
+                                  <span className="text-muted-foreground text-xs">...</span>
+                                )}
+                                <Button
+                                  variant={page === visitsPagination.currentPage ? "default" : "outline"}
+                                  size="sm"
+                                  onClick={() => loadPartnerVisits(page)}
+                                  disabled={loadingVisits}
+                                  className="text-xs min-w-[32px] h-8"
+                                >
+                                  {page}
+                                </Button>
+                              </React.Fragment>
+                            ))}
+                        </div>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => loadPartnerVisits(visitsPagination.currentPage + 1)}
+                          disabled={!visitsPagination.hasNextPage || loadingVisits}
+                          className="text-xs"
+                        >
+                          Next
+                          <ChevronRight className="h-3 w-3 ml-1" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  </>
+                )}
                 </div>
               </CardContent>
             </Card>

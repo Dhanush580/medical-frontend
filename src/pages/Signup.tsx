@@ -16,6 +16,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { Helmet } from "react-helmet-async";
+import { useToast } from "@/hooks/use-toast";
+import LoadingSpinner from "@/components/ui/loading";
 
 // Separate component for Personal Details to prevent re-renders
 const PersonalDetailsStep = ({ formData, onUpdate, onNext, onBack, errors, setErrors }) => {
@@ -355,10 +358,12 @@ const ProgressSteps = ({ currentStep }) => {
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState<any>(null);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -392,9 +397,14 @@ const Signup = () => {
       return data.exists;
     } catch (error) {
       console.error('Error checking email:', error);
+      toast({
+        title: "Connection Error",
+        description: "Unable to verify email. Please check your internet connection.",
+        variant: "destructive",
+      });
       return false;
     }
-  }, []);
+  }, [toast]);
 
   // Step navigation handlers with validation
   const handlePersonalDetailsNext = useCallback(async () => {
@@ -482,52 +492,70 @@ const Signup = () => {
     });
 
   const proceedToPayment = useCallback(async () => {
-    const res = await fetch(apiUrl('api/auth/register-with-order'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-        plan: formData.plan,
-        familyMembers: membersCount,
-        familyDetails: formData.familyDetails || [],
-      }),
-    });
-
-    let payload: any = null;
+    setIsLoading(true);
     try {
-      const text = await res.text();
-      if (!text) {
-        alert('Empty response from server when creating order. Check backend logs.');
+      const res = await fetch(apiUrl('api/auth/register-with-order'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          plan: formData.plan,
+          familyMembers: membersCount,
+          familyDetails: formData.familyDetails || [],
+        }),
+      });
+
+      let payload: any = null;
+      try {
+        const text = await res.text();
+        if (!text) {
+          toast({
+            title: "Server Error",
+            description: "Empty response from server. Please try again or contact support.",
+            variant: "destructive",
+          });
+          return;
+        }
+        payload = JSON.parse(text);
+      } catch (err) {
+        console.error('Failed to parse JSON from /api/auth/register-with-order', err);
+        toast({
+          title: "Server Error",
+          description: "Invalid response from server. Please try again or contact support.",
+          variant: "destructive",
+        });
         return;
       }
-      payload = JSON.parse(text);
-    } catch (err) {
-      console.error('Failed to parse JSON from /api/auth/register-with-order', err);
-      alert('Invalid response from server when creating order. Check backend logs.');
-      return;
-    }
 
-    if (!res.ok) {
-      alert(payload?.message || 'Failed to create order');
-      return;
-    }
+      if (!res.ok) {
+        toast({
+          title: "Registration Failed",
+          description: payload?.message || 'Failed to create order. Please try again.',
+          variant: "destructive",
+        });
+        return;
+      }
 
-    const { order, tempUser } = payload;
+      const { order, tempUser } = payload;
 
-    const ok = await loadRazorpayScript();
-    if (!ok) {
-      alert('Failed to load Razorpay SDK');
-      return;
-    }
+      const ok = await loadRazorpayScript();
+      if (!ok) {
+        toast({
+          title: "Payment Error",
+          description: "Failed to load payment system. Please refresh the page and try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
     const options: any = {
       key: (window as any).RAZORPAY_KEY || '',
       amount: order.amount,
       currency: order.currency,
-      name: 'HealthConnect',
+      name: 'MEDI COST SAVER',
       description: `Subscribe: ${tempUser.plan}`,
       order_id: order.id,
       modal: {
@@ -616,7 +644,10 @@ const Signup = () => {
       });
     }
     rzp.open();
-  }, [formData, membersCount]);
+  } finally {
+    setIsLoading(false);
+  }
+  }, [formData, membersCount, toast]);
 
   // Welcome Step
   const WelcomeStep = () => (
@@ -626,7 +657,7 @@ const Signup = () => {
           <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center">
             <Heart className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 text-white" />
           </div>
-          <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold">Welcome to HealthConnect</CardTitle>
+          <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold">Welcome to MEDI COST SAVER</CardTitle>
           <CardDescription className="text-blue-100 text-sm sm:text-base md:text-lg mt-2 sm:mt-4">
             Join thousands of families protecting their health with our comprehensive healthcare plan
           </CardDescription>
@@ -766,10 +797,20 @@ const Signup = () => {
           </Button>
           <Button 
             onClick={proceedToPayment}
-            className="w-full sm:flex-1 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white rounded-lg sm:rounded-xl transition-all duration-200 hover:shadow-lg text-sm sm:text-base md:text-lg font-semibold"
+            disabled={isLoading}
+            className="w-full sm:flex-1 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white rounded-lg sm:rounded-xl transition-all duration-200 hover:shadow-lg text-sm sm:text-base md:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Pay ₹{priceDisplay.discountedTotal}
-            <CreditCard className="ml-2 h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <LoadingSpinner size="sm" />
+                <span>Processing...</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span>Pay ₹{priceDisplay.discountedTotal}</span>
+                <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+              </div>
+            )}
           </Button>
         </CardFooter>
       </Card>
@@ -786,13 +827,13 @@ const Signup = () => {
           </div>
           <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Registration Complete!</CardTitle>
           <CardDescription className="text-gray-600 text-sm sm:text-base md:text-lg">
-            Welcome to the HealthConnect family
+            Welcome to the MEDI COST SAVER family
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 md:px-8 text-center">
           <div className="bg-emerald-50 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-            <h4 className="font-bold text-gray-900 text-base sm:text-lg md:text-lg mb-1 sm:mb-2">Your HealthConnect Plan</h4>
+            <h4 className="font-bold text-gray-900 text-base sm:text-lg md:text-lg mb-1 sm:mb-2">Your MEDI COST SAVER Plan</h4>
             <div className="space-y-1 sm:space-y-2 text-gray-600 text-sm sm:text-base">
               <p>Annual Subscription - ₹{priceDisplay.discountedTotal}</p>
               <p>{1 + membersCount} Family Member{membersCount !== 0 ? 's' : ''} Covered</p>
@@ -802,7 +843,7 @@ const Signup = () => {
 
           <div className="space-y-2 sm:space-y-3">
             <p className="text-gray-600 text-sm sm:text-base">
-              Your account has been created successfully. You can now login and start using HealthConnect services.
+              Your account has been created successfully. You can now login and start using MEDI COST SAVER services.
             </p>
             <p className="text-xs sm:text-sm text-gray-500">
               Check your email for confirmation and membership details.
@@ -858,6 +899,15 @@ const Signup = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Sign Up | MEDI COST SAVER - Join Healthcare Savings Program</title>
+        <meta name="description" content="Sign up for MEDI COST SAVER healthcare discount card. Get up to 25% savings on medical bills, pharmacy purchases, and diagnostic tests. Family plans available." />
+        <meta name="keywords" content="MEDI COST SAVER signup, healthcare discount card registration, medical savings membership, family healthcare plan, discount card join" />
+        <meta property="og:title" content="Join MEDI COST SAVER - Healthcare Discount Card Signup" />
+        <meta property="og:description" content="Register for healthcare savings with MEDI COST SAVER. Get 25% discounts on medical expenses across India." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://medicostsaver.com/signup" />
+      </Helmet>
       <Navbar />
       {renderStep()}
 

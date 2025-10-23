@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Phone, 
   Mail, 
@@ -16,8 +17,10 @@ import {
   ChevronDown
 } from "lucide-react";
 import { apiUrl } from "@/lib/api";
+import { Helmet } from "react-helmet-async";
 
 const ContactUs = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -147,7 +150,17 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-20">
+    <>
+      <Helmet>
+        <title>Contact Us | MEDI COST SAVER - Get Healthcare Support</title>
+        <meta name="description" content="Contact MEDI COST SAVER for healthcare discount card support. Get answers to your questions, partner with us, or reach our 24/7 customer support team." />
+        <meta name="keywords" content="contact MEDI COST SAVER, healthcare support, medical discount help, customer service India, healthcare partner registration" />
+        <meta property="og:title" content="Contact MEDI COST SAVER - Healthcare Support & Partnership" />
+        <meta property="og:description" content="Get in touch with our healthcare support team. Partner with us or get help with your medical discount card." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://medicostsaver.com/contact" />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 sm:py-12 md:py-20">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
@@ -442,6 +455,7 @@ const ContactUs = () => {
 
               <motion.div
                 whileHover={{ scale: 1.05 }}
+                onClick={() => navigate('/about')}
                 className="mt-4 sm:mt-6 bg-white text-blue-600 py-2 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold text-center hover:bg-gray-100 transition-colors cursor-pointer text-sm sm:text-base"
               >
                 Learn More About MCS
@@ -482,17 +496,17 @@ const ContactUs = () => {
               <p className="text-xs sm:text-sm text-gray-600">Get your discount card today</p>
             </motion.a>
 
-            <motion.a
+            <motion.div
               whileHover={{ scale: 1.05 }}
-              href="/doctors-registration"
-              className="bg-green-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-center hover:bg-green-100 transition-colors group"
+              onClick={() => navigate('/partner/register')}
+              className="bg-green-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-center hover:bg-green-100 transition-colors group cursor-pointer"
             >
               <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-green-100 rounded-lg sm:rounded-xl flex items-center justify-center text-green-600 mx-auto mb-2 sm:mb-3 md:mb-4 group-hover:bg-green-200 transition-colors">
                 <Heart className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Partner With Us</h3>
               <p className="text-xs sm:text-sm text-gray-600">Join as healthcare provider</p>
-            </motion.a>
+            </motion.div>
 
             <motion.a
               whileHover={{ scale: 1.05 }}
@@ -509,6 +523,7 @@ const ContactUs = () => {
         </div>
       </motion.section>
     </div>
+    </>
   );
 };
 

@@ -6,15 +6,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, Calendar, MapPin, Phone, Mail, Search, Filter, User, Shield, History, Home } from "lucide-react";
+import { Heart, Calendar, MapPin, Phone, Mail, Search, Filter, User, Shield, History, Home, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import indiaDistricts from "@/lib/indiaDistricts";
 import { apiUrl } from "@/lib/api";
+import LoadingSpinner from "@/components/ui/loading";
 
 const Dashboard = () => {
   const [user, setUser] = React.useState<any>(null);
   const [query, setQuery] = React.useState('');
   const [partners, setPartners] = React.useState<any[]>([]);
+  const [partnersPagination, setPartnersPagination] = React.useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalPartners: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
+    limit: 10
+  });
+  const [loadingPartners, setLoadingPartners] = React.useState(false);
   const [recentVisits, setRecentVisits] = React.useState<any[]>([]);
   const [selectedState, setSelectedState] = React.useState('');
   const [selectedDistrict, setSelectedDistrict] = React.useState('');
@@ -25,6 +35,8 @@ const Dashboard = () => {
   const [showStateSuggestions, setShowStateSuggestions] = React.useState(false);
   const [showDistrictSuggestions, setShowDistrictSuggestions] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('partners');
+  const [stateSuggestionIndex, setStateSuggestionIndex] = React.useState(-1);
+  const [districtSuggestionIndex, setDistrictSuggestionIndex] = React.useState(-1);
   const [inputState, setInputState] = React.useState('');
   const [inputDistrict, setInputDistrict] = React.useState('');
 
@@ -59,16 +71,31 @@ const Dashboard = () => {
     };
 
     loadUser();
+    searchPartners(); // Initial load of partners
   }, []);
 
-  // Instant search effect - only for query and type changes
+  // Instant search effect - for query, type, state, and district changes
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchPartners();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [query, selectedType]);
+  }, [query, selectedType, selectedState, selectedDistrict]);
+
+  // Handle clicks outside to close suggestions
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.state-input-container') && !target.closest('.district-input-container')) {
+        setShowStateSuggestions(false);
+        setShowDistrictSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const navigate = useNavigate();
 
@@ -100,6 +127,8 @@ const Dashboard = () => {
     setInputState(value);
     setInputDistrict('');
     setDistrictSuggestions([]);
+    setShowDistrictSuggestions(false);
+    setStateSuggestionIndex(-1);
 
     if (value.trim()) {
       const filtered = Object.keys(indiaDistricts)
@@ -115,9 +144,10 @@ const Dashboard = () => {
 
   const handleDistrictInputChange = (value: string) => {
     setInputDistrict(value);
+    setDistrictSuggestionIndex(-1);
 
-    if (value.trim() && inputState) {
-      const districts = getDistrictsForState(inputState);
+    if (value.trim() && selectedState) {
+      const districts = getDistrictsForState(selectedState);
       const filtered = districts
         .filter(district => district.toLowerCase().includes(value.toLowerCase()))
         .slice(0, 10);
@@ -137,51 +167,80 @@ const Dashboard = () => {
     setStateSuggestions([]);
     setShowStateSuggestions(false);
     setDistrictSuggestions([]);
-    searchPartners();
+    setShowDistrictSuggestions(false);
+    // Don't call searchPartners here since useEffect will trigger it
   };
 
   const selectDistrictSuggestion = (district: string) => {
+    console.log('selectDistrictSuggestion called with:', district);
     setInputDistrict(district);
     setSelectedDistrict(district);
     setDistrictSuggestions([]);
     setShowDistrictSuggestions(false);
-    searchPartners();
+    // Don't call searchPartners here since useEffect will trigger it
   };
 
-  const searchPartners = async () => {
-    setLoading(true);
+  const searchPartners = async (page = 1) => {
+    setLoadingPartners(true);
     try {
       const params = new URLSearchParams();
       if (query.trim()) params.append('q', query.trim());
       if (selectedType !== 'all') params.append('type', selectedType);
-      if (selectedState) params.append('state', selectedState);
-      if (selectedDistrict) params.append('district', selectedDistrict);
+      if (selectedState.trim()) params.append('state', selectedState.trim());
+      if (selectedDistrict.trim()) params.append('district', selectedDistrict.trim());
+      params.append('page', page.toString());
+      params.append('limit', '10');
 
       const res = await fetch(apiUrl(`api/partners?${params.toString()}`));
       if (res.ok) {
         const data = await res.json();
-        setPartners(data);
+        setPartners(data.partners);
+        setPartnersPagination(data.pagination);
       } else {
         console.error('Failed to search partners');
         setPartners([]);
+        setPartnersPagination({
+          currentPage: 1,
+          totalPages: 1,
+          totalPartners: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+          limit: 10
+        });
       }
     } catch (err) {
       console.error('Error searching partners:', err);
       setPartners([]);
+      setPartnersPagination({
+        currentPage: 1,
+        totalPages: 1,
+        totalPartners: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+        limit: 10
+      });
     } finally {
-      setLoading(false);
+      setLoadingPartners(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
+      {loading && (
+        <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg flex items-center gap-3">
+            <LoadingSpinner size="md" />
+            <span className="text-lg font-medium">Loading...</span>
+          </div>
+        </div>
+      )}
       {/* Navigation */}
       <nav className="border-b bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-3 sm:px-4 py-3 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-2 transition-transform hover:scale-105">
             <Heart className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-              HealthConnect
+              MEDI COST SAVER
             </span>
           </Link>
           <div className="flex gap-2 sm:gap-3 items-center">
@@ -246,8 +305,8 @@ const Dashboard = () => {
           </TabsList>
 
           {/* Partners Tab */}
-          <TabsContent value="partners" className="space-y-4 sm:space-y-6 animate-in fade-in-50">
-            <Card className="border-0 shadow-lg rounded-xl sm:rounded-2xl overflow-hidden">
+          <TabsContent value="partners" className="space-y-4 sm:space-y-6 animate-in fade-in-50 overflow-visible">
+            <Card className="border-0 shadow-lg rounded-xl sm:rounded-2xl overflow-visible">
               <CardHeader className="bg-gradient-to-r from-primary/5 to-blue-50 pb-3 sm:pb-4">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
@@ -262,6 +321,12 @@ const Dashboard = () => {
                 </div>
               </CardHeader>
               <CardContent className="pt-4 sm:pt-6">
+                {loadingPartners && (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span className="ml-2 text-muted-foreground">Loading partners...</span>
+                  </div>
+                )}
                 <div className="space-y-4 sm:space-y-6">
                   {/* Search Input */}
                   <div className="relative">
@@ -279,7 +344,7 @@ const Dashboard = () => {
                   </div>
 
                   {/* Filters Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 overflow-visible">
                     <div className="space-y-2 sm:space-y-3">
                       <Label htmlFor="type" className="text-xs sm:text-sm font-medium">Service Type</Label>
                       <Select value={selectedType} onValueChange={setSelectedType}>
@@ -296,22 +361,63 @@ const Dashboard = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2 sm:space-y-3 relative">
+                    <div className="space-y-2 sm:space-y-3 relative state-input-container">
                       <Label htmlFor="state" className="text-xs sm:text-sm font-medium">State</Label>
                       <Input
                         id="state"
                         value={inputState}
                         onChange={(e) => handleStateInputChange(e.target.value)}
-                        onFocus={() => stateSuggestions.length > 0 && setShowStateSuggestions(true)}
+                        onFocus={() => {
+                          if (inputState.trim() && stateSuggestions.length === 0) {
+                            // Re-trigger filtering if we have input but no suggestions
+                            handleStateInputChange(inputState);
+                          }
+                          setStateSuggestionIndex(-1);
+                        }}
+                        onBlur={() => {
+                          // Delay hiding to allow click on suggestions
+                          setTimeout(() => {
+                            setShowStateSuggestions(false);
+                            setStateSuggestionIndex(-1);
+                          }, 150);
+                        }}
+                        onKeyDown={(e) => {
+                          if (!showStateSuggestions || stateSuggestions.length === 0) return;
+
+                          if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            setStateSuggestionIndex(prev =>
+                              prev < stateSuggestions.length - 1 ? prev + 1 : 0
+                            );
+                          } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            setStateSuggestionIndex(prev =>
+                              prev > 0 ? prev - 1 : stateSuggestions.length - 1
+                            );
+                          } else if (e.key === 'Enter' && stateSuggestionIndex >= 0) {
+                            e.preventDefault();
+                            selectStateSuggestion(stateSuggestions[stateSuggestionIndex]);
+                          } else if (e.key === 'Escape') {
+                            setShowStateSuggestions(false);
+                            setStateSuggestionIndex(-1);
+                          }
+                        }}
                         placeholder="Type state name..."
                         className="rounded-lg sm:rounded-xl border-muted-foreground/20 focus:border-primary transition-colors text-sm sm:text-base"
                       />
-                      {showStateSuggestions && stateSuggestions.length > 0 && (
-                        <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg sm:rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                          {stateSuggestions.map((state) => (
+                      {inputState.trim() && stateSuggestions.length > 0 && (
+                        <div 
+                          className="absolute z-[60] w-full mt-1 bg-white border border-border rounded-lg sm:rounded-xl shadow-lg max-h-48 overflow-y-auto"
+                          onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing when clicking suggestions
+                        >
+                          {stateSuggestions.map((state, index) => (
                             <div
                               key={state}
-                              className="px-3 sm:px-4 py-2 sm:py-3 hover:bg-muted/50 cursor-pointer text-xs sm:text-sm border-b border-border/50 last:border-b-0 transition-colors"
+                              className={`px-3 sm:px-4 py-2 sm:py-3 cursor-pointer text-xs sm:text-sm border-b border-border/50 last:border-b-0 transition-colors ${
+                                index === stateSuggestionIndex
+                                  ? 'bg-primary/10 text-primary font-medium'
+                                  : 'hover:bg-primary/5'
+                              }`}
                               onClick={() => selectStateSuggestion(state)}
                             >
                               {state}
@@ -321,23 +427,64 @@ const Dashboard = () => {
                       )}
                     </div>
 
-                    <div className="space-y-2 sm:space-y-3 relative">
+                    <div className="space-y-2 sm:space-y-3 relative district-input-container">
                       <Label htmlFor="district" className="text-xs sm:text-sm font-medium">District</Label>
                       <Input
                         id="district"
                         value={inputDistrict}
                         onChange={(e) => handleDistrictInputChange(e.target.value)}
-                        onFocus={() => districtSuggestions.length > 0 && setShowDistrictSuggestions(true)}
+                        onFocus={() => {
+                          if (inputDistrict.trim() && districtSuggestions.length === 0 && selectedState) {
+                            // Re-trigger filtering if we have input but no suggestions
+                            handleDistrictInputChange(inputDistrict);
+                          }
+                          setDistrictSuggestionIndex(-1);
+                        }}
+                        onBlur={() => {
+                          // Delay hiding to allow click on suggestions
+                          setTimeout(() => {
+                            setShowDistrictSuggestions(false);
+                            setDistrictSuggestionIndex(-1);
+                          }, 100);
+                        }}
+                        onKeyDown={(e) => {
+                          if (!showDistrictSuggestions || districtSuggestions.length === 0) return;
+
+                          if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            setDistrictSuggestionIndex(prev =>
+                              prev < districtSuggestions.length - 1 ? prev + 1 : 0
+                            );
+                          } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            setDistrictSuggestionIndex(prev =>
+                              prev > 0 ? prev - 1 : districtSuggestions.length - 1
+                            );
+                          } else if (e.key === 'Enter' && districtSuggestionIndex >= 0) {
+                            e.preventDefault();
+                            selectDistrictSuggestion(districtSuggestions[districtSuggestionIndex]);
+                          } else if (e.key === 'Escape') {
+                            setShowDistrictSuggestions(false);
+                            setDistrictSuggestionIndex(-1);
+                          }
+                        }}
                         placeholder="Type district name..."
                         className="rounded-lg sm:rounded-xl border-muted-foreground/20 focus:border-primary transition-colors text-sm sm:text-base disabled:opacity-50"
-                        disabled={!inputState}
+                        disabled={!selectedState}
                       />
                       {showDistrictSuggestions && districtSuggestions.length > 0 && (
-                        <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg sm:rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                          {districtSuggestions.map((district) => (
+                        <div 
+                          className="absolute z-[60] w-full mt-1 bg-white border border-border rounded-lg sm:rounded-xl shadow-lg max-h-48 overflow-y-auto"
+                          onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing when clicking suggestions
+                        >
+                          {districtSuggestions.map((district, index) => (
                             <div
                               key={district}
-                              className="px-3 sm:px-4 py-2 sm:py-3 hover:bg-muted/50 cursor-pointer text-xs sm:text-sm border-b border-border/50 last:border-b-0 transition-colors"
+                              className={`px-3 sm:px-4 py-2 sm:py-3 cursor-pointer text-xs sm:text-sm border-b border-border/50 last:border-b-0 transition-colors ${
+                                index === districtSuggestionIndex
+                                  ? 'bg-primary/10 text-primary font-medium'
+                                  : 'hover:bg-primary/5'
+                              }`}
                               onClick={() => selectDistrictSuggestion(district)}
                             >
                               {district}
@@ -565,10 +712,67 @@ const Dashboard = () => {
                           </Card>
                         ))}
                       </div>
+
+                      {/* Pagination Controls */}
+                      {!loadingPartners && partnersPagination.totalPages > 1 && (
+                        <div className="flex items-center justify-between pt-4 border-t">
+                          <div className="text-sm text-muted-foreground">
+                            Showing {partners.length} of {partnersPagination.totalPartners} partners
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => searchPartners(partnersPagination.currentPage - 1)}
+                              disabled={!partnersPagination.hasPrevPage || loadingPartners}
+                              className="text-xs"
+                            >
+                              <ChevronLeft className="h-3 w-3 mr-1" />
+                              Previous
+                            </Button>
+
+                            <div className="flex items-center gap-1">
+                              {Array.from({ length: partnersPagination.totalPages }, (_, i) => i + 1)
+                                .filter(page => {
+                                  const current = partnersPagination.currentPage;
+                                  return page === 1 || page === partnersPagination.totalPages ||
+                                         (page >= current - 1 && page <= current + 1);
+                                })
+                                .map((page, index, array) => (
+                                  <React.Fragment key={page}>
+                                    {index > 0 && array[index - 1] !== page - 1 && (
+                                      <span className="text-muted-foreground text-xs">...</span>
+                                    )}
+                                    <Button
+                                      variant={page === partnersPagination.currentPage ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => searchPartners(page)}
+                                      disabled={loadingPartners}
+                                      className="text-xs min-w-[32px] h-8"
+                                    >
+                                      {page}
+                                    </Button>
+                                  </React.Fragment>
+                                ))}
+                            </div>
+
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => searchPartners(partnersPagination.currentPage + 1)}
+                              disabled={!partnersPagination.hasNextPage || loadingPartners}
+                              className="text-xs"
+                            >
+                              Next
+                              <ChevronRight className="h-3 w-3 ml-1" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
-                  {partners.length === 0 && !loading && (query || selectedType !== 'all' || selectedState || selectedDistrict) && (
+                  {partners.length === 0 && !loadingPartners && (query || selectedType !== 'all' || selectedState || selectedDistrict) && (
                     <div className="text-center py-8 sm:py-12 text-muted-foreground">
                       <Search className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 opacity-40" />
                       <p className="text-base sm:text-lg font-medium mb-1 sm:mb-2">No partners found</p>
