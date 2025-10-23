@@ -235,6 +235,77 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Free Dental Consultation Highlight */}
+      <section className="py-12 sm:py-14 md:py-16 bg-gradient-to-r from-green-50 to-emerald-50 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-8 sm:mb-10"
+          >
+            <div className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
+              <Crown className="w-4 h-4" />
+              EXCLUSIVE BENEFIT
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-800 mb-3 sm:mb-4">
+              🎁 FREE Dental Consultation For Life
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-green-700 max-w-3xl mx-auto leading-relaxed">
+              Get <span className="font-bold text-green-800 text-xl">unlimited free dental consultations</span> throughout the year at our partner dental clinics.
+              No limits, no hidden costs - just quality dental care when you need it.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-xl border-2 border-green-200"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Stethoscope className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Expert Dentists</h3>
+                <p className="text-gray-600 text-sm sm:text-base">Consult with qualified dental professionals across our network</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Unlimited Visits</h3>
+                <p className="text-gray-600 text-sm sm:text-base">No limit on consultation visits throughout your membership year</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Verified Quality</h3>
+                <p className="text-gray-600 text-sm sm:text-base">All partner dentists are verified and maintain high standards</p>
+              </div>
+            </div>
+
+            <div className="mt-8 text-center">
+              <Link to="/coming-soon">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base hover:bg-green-700 transition-colors inline-flex items-center gap-2"
+                >
+                  Get FREE Dental Care Today
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                </motion.button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Available Plans Section */}
       <section className="py-12 sm:py-14 md:py-16 bg-gray-50 px-4">
         <div className="container mx-auto max-w-6xl">

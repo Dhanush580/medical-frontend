@@ -78,7 +78,8 @@ const HowItWorks = () => {
     },
     {
       icon: <Star className="w-5 h-5 sm:w-6 sm:h-6" />,
-      text: "Free Dental Consultation (Unlimited)"
+      text: "🎁 FREE Dental Consultation (Unlimited Visits)",
+      highlight: true
     }
   ];
 
@@ -141,12 +142,25 @@ const HowItWorks = () => {
               <motion.div
                 key={index}
                 variants={fadeInUp}
-                className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                className={`flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow ${
+                  benefit.highlight 
+                    ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 ring-1 ring-green-100' 
+                    : 'bg-white'
+                }`}
               >
-                <div className="text-blue-600 flex-shrink-0">
+                <div className={`flex-shrink-0 ${benefit.highlight ? 'text-green-600' : 'text-blue-600'}`}>
                   {benefit.icon}
                 </div>
-                <span className="text-xs sm:text-sm font-medium text-gray-700">{benefit.text}</span>
+                <span className={`text-xs sm:text-sm font-medium ${
+                  benefit.highlight ? 'text-green-800 font-bold' : 'text-gray-700'
+                }`}>
+                  {benefit.text}
+                </span>
+                {benefit.highlight && (
+                  <span className="ml-auto bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-full flex-shrink-0">
+                    FREE
+                  </span>
+                )}
               </motion.div>
             ))}
           </motion.div>

@@ -112,8 +112,9 @@ const FAQ = () => {
     {
       id: 13,
       question: "Do I get free dental consultation with my membership?",
-      answer: "Yes! All MCS members receive unlimited free dental consultations throughout the year. This benefit is available at our partner dental clinics and covers consultation, diagnosis, and treatment planning. Simply show your digital membership card at any verified dental partner to avail this benefit. This applies to all family members covered under your plan.",
-      category: "usage"
+      answer: "⭐ YES! This is our STAR BENEFIT ⭐ All MCS members receive UNLIMITED FREE DENTAL CONSULTATIONS throughout the year at no extra cost! This exclusive benefit covers consultation, diagnosis, and treatment planning at our partner dental clinics. Simply show your digital membership card to avail this benefit. This applies to all family members covered under your plan. No other healthcare discount card offers this level of dental care!",
+      category: "usage",
+      highlight: true
     }
   ];
 
@@ -262,20 +263,45 @@ const FAQ = () => {
                     initial="initial"
                     animate="animate"
                     exit={{ opacity: 0, y: -20 }}
-                    className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                    className={`rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden ${
+                      faq.highlight 
+                        ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 shadow-green-100' 
+                        : 'bg-white'
+                    }`}
                   >
                     <button
                       onClick={() => toggleItem(faq.id)}
-                      className="w-full px-4 sm:px-6 py-4 sm:py-6 text-left flex items-center justify-between gap-3 sm:gap-4 hover:bg-gray-50 transition-colors"
+                      className={`w-full px-4 sm:px-6 py-4 sm:py-6 text-left flex items-center justify-between gap-3 sm:gap-4 transition-colors ${
+                        faq.highlight 
+                          ? 'hover:bg-green-100/50' 
+                          : 'hover:bg-gray-50'
+                      }`}
                     >
                       <div className="flex items-start gap-3 sm:gap-4 flex-1">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0 mt-1">
-                          <span className="font-semibold text-xs sm:text-sm">Q</span>
+                        <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-1 ${
+                          faq.highlight 
+                            ? 'bg-green-500 text-white' 
+                            : 'bg-blue-100 text-blue-600'
+                        }`}>
+                          {faq.highlight ? (
+                            <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" />
+                          ) : (
+                            <span className="font-semibold text-xs sm:text-sm">Q</span>
+                          )}
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-2 text-left">
-                            {faq.question}
-                          </h3>
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className={`font-semibold text-gray-900 text-base sm:text-lg text-left ${
+                              faq.highlight ? 'text-green-800' : ''
+                            }`}>
+                              {faq.question}
+                            </h3>
+                            {faq.highlight && (
+                              <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
+                                FREE BENEFIT
+                              </span>
+                            )}
+                          </div>
                           <AnimatePresence>
                             {openItems.includes(faq.id) && (
                               <motion.div
@@ -283,7 +309,9 @@ const FAQ = () => {
                                 animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="text-gray-600 leading-relaxed text-left text-sm sm:text-base"
+                                className={`leading-relaxed text-left text-sm sm:text-base ${
+                                  faq.highlight ? 'text-green-700 font-medium' : 'text-gray-600'
+                                }`}
                               >
                                 {faq.answer}
                               </motion.div>
@@ -294,7 +322,11 @@ const FAQ = () => {
                       <motion.div
                         animate={{ rotate: openItems.includes(faq.id) ? 180 : 0 }}
                         transition={{ duration: 0.3 }}
-                        className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0"
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                          faq.highlight 
+                            ? 'bg-green-500 text-white' 
+                            : 'bg-blue-100 text-blue-600'
+                        }`}
                       >
                         {openItems.includes(faq.id) ? (
                           <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

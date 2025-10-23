@@ -916,6 +916,59 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
 
+              {/* Key Benefits Highlight */}
+              <Card className="border-0 shadow-lg rounded-xl sm:rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 bg-green-500 rounded-lg">
+                      <Heart className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl sm:text-2xl text-green-800">Your Exclusive Benefits</CardTitle>
+                      <CardDescription className="text-sm sm:text-base text-green-700">
+                        Make the most of your MEDI COST SAVER membership
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-4 sm:pt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    {/* Dental Benefit - Highlighted */}
+                    <div className="bg-white/70 backdrop-blur-sm p-4 sm:p-6 rounded-xl border-2 border-green-300 shadow-lg">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-green-500 rounded-lg">
+                          <Heart className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <div className="font-bold text-green-800 text-lg">FREE Dental Consultation</div>
+                          <div className="text-green-600 text-sm font-medium">Unlimited Visits</div>
+                        </div>
+                      </div>
+                      <p className="text-green-700 text-sm leading-relaxed">
+                        ⭐ STAR BENEFIT: Get unlimited free dental consultations throughout the year at our partner clinics. 
+                        Covers consultation, diagnosis, and treatment planning for you and your entire family!
+                      </p>
+                    </div>
+
+                    {/* Other Benefits */}
+                    <div className="bg-white/50 backdrop-blur-sm p-4 sm:p-6 rounded-xl">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-blue-500 rounded-lg">
+                          <Shield className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-800 text-lg">Healthcare Discounts</div>
+                          <div className="text-gray-600 text-sm">Up to 25% Savings</div>
+                        </div>
+                      </div>
+                      <p className="text-gray-700 text-sm leading-relaxed">
+                        Save on doctor consultations, pharmacy bills, and diagnostic tests at all partner facilities across India.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Family Members & Digital Card */}
               <div className="space-y-4 sm:space-y-6">
                 {/* Family Members */}

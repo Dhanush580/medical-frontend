@@ -265,6 +265,28 @@ const PartnerRegister = () => {
             </CardHeader>
             <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
               <div className="space-y-3 sm:space-y-4">
+                {/* Highlighted Dentist Requirement - Moved to Top */}
+                <div className="flex items-start gap-2 sm:gap-3 p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border-2 border-green-300 shadow-lg relative overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
+                    ⭐ FEATURED
+                  </div>
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                    <Stethoscope className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-green-800 text-sm sm:text-lg mb-2 flex items-center gap-2">
+                      <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">FREE</span>
+                      Dentist Requirements
+                    </h4>
+                    <p className="text-green-700 text-sm sm:text-base font-semibold leading-relaxed">
+                      🎁 Dentists must provide <span className="text-green-800 font-bold text-lg">FREE consultation</span> for MEDI COST SAVER members
+                    </p>
+                    <p className="text-green-600 text-xs sm:text-sm mt-2 font-medium">
+                      Join now and attract more patients with this exclusive benefit!
+                    </p>
+                  </div>
+                </div>
+
                 <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-white/60 rounded-lg border border-amber-200">
                   <Award className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                   <div>
@@ -280,15 +302,6 @@ const PartnerRegister = () => {
                     <h4 className="font-semibold text-amber-800 text-xs sm:text-sm">Procedure/Service Discounts</h4>
                     <p className="text-amber-700 text-xs sm:text-sm mt-1">
                       Every partner should provide discounts on some of their available procedures or services
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-white/60 rounded-lg border border-amber-200">
-                  <Stethoscope className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-semibold text-amber-800 text-xs sm:text-sm">Dentist Requirements</h4>
-                    <p className="text-amber-700 text-xs sm:text-sm mt-1">
-                      Dentists must provide free consultation for MEDI COST SAVER members
                     </p>
                   </div>
                 </div>
