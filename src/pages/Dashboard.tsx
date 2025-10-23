@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [selectedState, setSelectedState] = React.useState('');
   const [selectedDistrict, setSelectedDistrict] = React.useState('');
   const [selectedType, setSelectedType] = React.useState('all');
+  const [selectedSpecialization, setSelectedSpecialization] = React.useState('all');
   const [loading, setLoading] = React.useState(false);
   const [stateSuggestions, setStateSuggestions] = React.useState<string[]>([]);
   const [districtSuggestions, setDistrictSuggestions] = React.useState<string[]>([]);
@@ -74,14 +75,14 @@ const Dashboard = () => {
     searchPartners(); // Initial load of partners
   }, []);
 
-  // Instant search effect - for query, type, state, and district changes
+  // Instant search effect - for query, type, state, district, and specialization changes
   React.useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchPartners();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [query, selectedType, selectedState, selectedDistrict]);
+  }, [query, selectedType, selectedState, selectedDistrict, selectedSpecialization]);
 
   // Handle clicks outside to close suggestions
   React.useEffect(() => {
@@ -180,6 +181,11 @@ const Dashboard = () => {
     // Don't call searchPartners here since useEffect will trigger it
   };
 
+  const handleTypeChange = (type: string) => {
+    setSelectedType(type);
+    setSelectedSpecialization('all'); // Reset specialization when type changes
+  };
+
   const searchPartners = async (page = 1) => {
     setLoadingPartners(true);
     try {
@@ -188,6 +194,7 @@ const Dashboard = () => {
       if (selectedType !== 'all') params.append('type', selectedType);
       if (selectedState.trim()) params.append('state', selectedState.trim());
       if (selectedDistrict.trim()) params.append('district', selectedDistrict.trim());
+      if (selectedSpecialization !== 'all') params.append('specialization', selectedSpecialization);
       params.append('page', page.toString());
       params.append('limit', '10');
 
@@ -347,7 +354,7 @@ const Dashboard = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 overflow-visible">
                     <div className="space-y-2 sm:space-y-3">
                       <Label htmlFor="type" className="text-xs sm:text-sm font-medium">Service Type</Label>
-                      <Select value={selectedType} onValueChange={setSelectedType}>
+                      <Select value={selectedType} onValueChange={handleTypeChange}>
                         <SelectTrigger className="rounded-lg sm:rounded-xl border-muted-foreground/20 focus:border-primary transition-colors text-sm sm:text-base">
                           <SelectValue placeholder="All Types" />
                         </SelectTrigger>
@@ -360,6 +367,41 @@ const Dashboard = () => {
                         </SelectContent>
                       </Select>
                     </div>
+
+                    {/* Specialization Filter - Only show for doctors and dentists */}
+                    {(selectedType === 'doctor' || selectedType === 'dentist') && (
+                      <div className="space-y-2 sm:space-y-3">
+                        <Label htmlFor="specialization" className="text-xs sm:text-sm font-medium">Specialization</Label>
+                        <Select value={selectedSpecialization} onValueChange={setSelectedSpecialization}>
+                          <SelectTrigger className="rounded-lg sm:rounded-xl border-muted-foreground/20 focus:border-primary transition-colors text-sm sm:text-base">
+                            <SelectValue placeholder="All Specializations" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Specializations</SelectItem>
+                            <SelectItem value="General Medicine">General Medicine</SelectItem>
+                            <SelectItem value="Cardiology">Cardiology</SelectItem>
+                            <SelectItem value="Dermatology">Dermatology</SelectItem>
+                            <SelectItem value="Endocrinology">Endocrinology</SelectItem>
+                            <SelectItem value="Gastroenterology">Gastroenterology</SelectItem>
+                            <SelectItem value="Neurology">Neurology</SelectItem>
+                            <SelectItem value="Orthopedics">Orthopedics</SelectItem>
+                            <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                            <SelectItem value="Psychiatry">Psychiatry</SelectItem>
+                            <SelectItem value="Radiology">Radiology</SelectItem>
+                            <SelectItem value="Surgery">Surgery</SelectItem>
+                            <SelectItem value="Urology">Urology</SelectItem>
+                            <SelectItem value="Gynecology">Gynecology</SelectItem>
+                            <SelectItem value="Ophthalmology">Ophthalmology</SelectItem>
+                            <SelectItem value="ENT">ENT</SelectItem>
+                            <SelectItem value="Dentistry">Dentistry</SelectItem>
+                            <SelectItem value="Oral Surgery">Oral Surgery</SelectItem>
+                            <SelectItem value="Orthodontics">Orthodontics</SelectItem>
+                            <SelectItem value="Periodontics">Periodontics</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
 
                     <div className="space-y-2 sm:space-y-3 relative state-input-container">
                       <Label htmlFor="state" className="text-xs sm:text-sm font-medium">State</Label>
@@ -496,7 +538,7 @@ const Dashboard = () => {
                   </div>
 
                   {/* Clear Filters */}
-                  {(query || selectedType !== 'all' || selectedState || selectedDistrict) && (
+                  {(query || selectedType !== 'all' || selectedState || selectedDistrict || selectedSpecialization !== 'all') && (
                     <div className="flex justify-center mt-3 sm:mt-4">
                       <Button
                         variant="outline"
@@ -504,6 +546,7 @@ const Dashboard = () => {
                         onClick={() => {
                           setQuery('');
                           setSelectedType('all');
+                          setSelectedSpecialization('all');
                           setSelectedState('');
                           setSelectedDistrict('');
                           setInputState('');
@@ -534,9 +577,16 @@ const Dashboard = () => {
                         <h4 className="font-semibold text-base sm:text-lg">
                           Found {partners.length} partner{partners.length !== 1 ? 's' : ''}
                         </h4>
-                        <Badge variant="secondary" className="bg-primary/10 text-primary text-xs sm:text-sm">
-                          {selectedType === 'all' ? 'All Types' : selectedType}
-                        </Badge>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="secondary" className="bg-primary/10 text-primary text-xs sm:text-sm">
+                            {selectedType === 'all' ? 'All Types' : selectedType}
+                          </Badge>
+                          {selectedSpecialization !== 'all' && (
+                            <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 text-xs sm:text-sm">
+                              {selectedSpecialization}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                       <div className="grid gap-4 sm:gap-6 max-h-96 overflow-y-auto pr-1 sm:pr-2">
                         {partners.map((p, idx) => (
@@ -772,7 +822,7 @@ const Dashboard = () => {
                     </div>
                   )}
 
-                  {partners.length === 0 && !loadingPartners && (query || selectedType !== 'all' || selectedState || selectedDistrict) && (
+                  {partners.length === 0 && !loadingPartners && (query || selectedType !== 'all' || selectedState || selectedDistrict || selectedSpecialization !== 'all') && (
                     <div className="text-center py-8 sm:py-12 text-muted-foreground">
                       <Search className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 opacity-40" />
                       <p className="text-base sm:text-lg font-medium mb-1 sm:mb-2">No partners found</p>
