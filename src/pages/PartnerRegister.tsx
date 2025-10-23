@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "@/lib/api";
 import {
@@ -72,6 +73,12 @@ const PartnerRegister = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState<{ success: boolean; message: string } | null>(null);
+  const [hasShownSuccessMessage, setHasShownSuccessMessage] = useState(false);
+
+  // terms and conditions
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [termsDialogOpen, setTermsDialogOpen] = useState(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
 
   const districtsForSelected = stateValue && stateDistricts[stateValue] ? stateDistricts[stateValue] : [];
 
@@ -107,12 +114,17 @@ const PartnerRegister = () => {
     setDiscountAmount("");
     setDiscountItems([]);
     setCurrentDiscountItem("");
+    setAcceptTerms(false);
+    setHasScrolledToBottom(false);
   };
 
   const validate = () => {
     // basic required checks per role
     if (!role) return 'Please select a partner type (Doctor / Dentist / Diagnostic / Pharmacy).';
     if (!personName) return 'Please enter responsible person name.';
+    if (!personAge || personAge === '') return 'Please enter your age.';
+    if (!personSex) return 'Please select your sex.';
+    if (!personDOB) return 'Please enter your date of birth.';
     if (!contactPhone) return 'Please enter a contact phone number.';
     if (!contactEmail) return 'Please enter a contact email.';
     if (!email) return 'Please enter login email.';
@@ -122,16 +134,22 @@ const PartnerRegister = () => {
     if (!stateValue) return 'Please select a state.';
     if (!district && !customDistrict) return 'Please select or enter a district.';
     if (!pincode) return 'Please enter a pincode.';
+    if (!timeFrom || !timeTo) return 'Please specify your available timings (from and to).';
+    if (!dayFrom || !dayTo) return 'Please specify your available days (from and to).';
     if (!councilName) return 'Please enter council/registration authority name.';
     if (!councilNumber) return 'Please enter council/registration number.';
     // specialization required for doctors and dentists
     if ((role === 'doctor' || role === 'dentist') && !specialization) return 'Please select your specialization.';
     if ((role === 'doctor' || role === 'dentist') && specialization === 'Other' && !customSpecialization.trim()) return 'Please enter your specialization.';
-    // centers require certificate
-    if ((role === 'diagnostic' || role === 'pharmacy') && !certificateFile) return 'Please upload the government registration certificate.';
+    // certificate required for all roles
+    if (!certificateFile) return role === 'doctor' || role === 'dentist' ? 'Please upload your council certificate.' : 'Please upload the government registration certificate.';
+    // clinic photos required for doctors and dentists
+    if ((role === 'doctor' || role === 'dentist') && !clinicPhotos) return 'Please upload clinic photos.';
     // discount validation
     if (!discountAmount) return 'Please specify the discount amount you are willing to provide.';
     if (discountItems.length === 0) return 'Please add at least one service/procedure you want to offer discount on.';
+    // terms and conditions validation
+    if (!acceptTerms) return 'Please accept the terms and conditions to proceed.';
     return null;
   };
 
@@ -202,8 +220,11 @@ const PartnerRegister = () => {
         return;
       }
 
-      setDialogData({ success: true, message: 'Registration submitted successfully. Our team will review and contact you.' });
-      setDialogOpen(true);
+      if (!hasShownSuccessMessage) {
+        setDialogData({ success: true, message: 'Registration submitted successfully. Our team will review and contact you.' });
+        setDialogOpen(true);
+        setHasShownSuccessMessage(true);
+      }
       resetForm();
     } catch (err) {
       console.error(err);
@@ -371,7 +392,7 @@ const PartnerRegister = () => {
                     />
                   </div>
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="text-xs sm:text-sm font-medium text-gray-700">Age</Label>
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700">Age *</Label>
                     <Input 
                       type="number" 
                       value={String(personAge || '')} 
@@ -381,7 +402,7 @@ const PartnerRegister = () => {
                     />
                   </div>
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="text-xs sm:text-sm font-medium text-gray-700">Sex</Label>
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700">Sex *</Label>
                     <div className="relative">
                       <select 
                         className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base appearance-none bg-white"
@@ -401,7 +422,7 @@ const PartnerRegister = () => {
                     </div>
                   </div>
                   <div className="space-y-1.5 sm:space-y-2">
-                    <Label className="text-xs sm:text-sm font-medium text-gray-700">Date of Birth</Label>
+                    <Label className="text-xs sm:text-sm font-medium text-gray-700">Date of Birth *</Label>
                     <Input 
                       type="date" 
                       value={personDOB} 
@@ -502,7 +523,7 @@ const PartnerRegister = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
                     <div className="space-y-1.5 sm:space-y-2">
-                      <Label className="text-xs sm:text-sm font-medium text-gray-700">Available Timings</Label>
+                      <Label className="text-xs sm:text-sm font-medium text-gray-700">Available Timings *</Label>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="relative">
                           <select
@@ -571,7 +592,7 @@ const PartnerRegister = () => {
                       </div>
                     </div>
                     <div className="space-y-1.5 sm:space-y-2">
-                      <Label className="text-xs sm:text-sm font-medium text-gray-700">Available Days</Label>
+                      <Label className="text-xs sm:text-sm font-medium text-gray-700">Available Days *</Label>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="relative">
                           <select
@@ -787,7 +808,7 @@ const PartnerRegister = () => {
                   <div className="space-y-3 sm:space-y-4">
                     <div className="space-y-1.5 sm:space-y-2">
                       <Label className="text-xs sm:text-sm font-medium text-gray-700 flex items-center gap-1.5 sm:gap-2">
-                        {role === 'doctor' || role === 'dentist' ? 'Council Certificate (Optional)' : 'Government Registration Certificate (Required)'}
+                        {role === 'doctor' || role === 'dentist' ? 'Council Certificate (Required)' : 'Government Registration Certificate (Required)'}
                         {certificateFile && <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />}
                       </Label>
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-4 md:p-6 text-center transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50 relative">
@@ -809,7 +830,7 @@ const PartnerRegister = () => {
                 {(role === 'doctor' || role === 'dentist') && (
                   <div className="space-y-1.5 sm:space-y-2">
                     <Label className="text-xs sm:text-sm font-medium text-gray-700 flex items-center gap-1.5 sm:gap-2">
-                      Clinic Photos (Optional - you may upload multiple)
+                      Clinic Photos (Required - you may upload multiple)
                       {clinicPhotos && <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />}
                     </Label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-4 md:p-6 text-center transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50 relative">
@@ -909,6 +930,36 @@ const PartnerRegister = () => {
                 </div>
               </section>
 
+              {/* Terms and Conditions */}
+              <section className="space-y-3 sm:space-y-4">
+                <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <Checkbox
+                    id="terms"
+                    checked={acceptTerms}
+                    onCheckedChange={(checked) => {
+                      setAcceptTerms(checked as boolean);
+                      if (checked) {
+                        setTermsDialogOpen(true);
+                        setHasScrolledToBottom(false);
+                      }
+                    }}
+                    className="mt-0.5 sm:mt-1"
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="terms" className="text-xs sm:text-sm text-gray-700 cursor-pointer">
+                      I accept the{' '}
+                      <button
+                        type="button"
+                        onClick={() => setTermsDialogOpen(true)}
+                        className="text-blue-600 hover:text-blue-700 underline font-medium"
+                      >
+                        Terms and Conditions
+                      </button>
+                    </Label>
+                  </div>
+                </div>
+              </section>
+
               {/* Status and Actions */}
               {statusMessage && (
                 <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
@@ -920,7 +971,7 @@ const PartnerRegister = () => {
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-gray-200">
                 <Button 
                   onClick={handleSubmit} 
-                  disabled={loading}
+                  disabled={loading || !acceptTerms}
                   className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-2 sm:py-3 rounded-lg sm:rounded-xl transition-all duration-200 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {loading ? (
@@ -984,6 +1035,300 @@ const PartnerRegister = () => {
       <div className="min-h-screen bg-background">
         {!role ? selection : form}
       </div>
+
+      {/* Terms and Conditions Dialog */}
+      <Dialog open={termsDialogOpen} onOpenChange={setTermsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="text-lg sm:text-xl font-bold text-gray-900">
+              Terms and Conditions
+            </DialogTitle>
+            <DialogDescription className="text-sm text-gray-600">
+              Please read all terms and conditions carefully before accepting.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div 
+            className="flex-1 overflow-y-auto max-h-96 p-4 border rounded-lg bg-gray-50 text-sm leading-relaxed"
+            onScroll={(e) => {
+              const element = e.currentTarget;
+              const isAtBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 10;
+              setHasScrolledToBottom(isAtBottom);
+            }}
+          >
+            <div className="space-y-4 text-gray-800">
+              <h2 className="text-xl font-bold text-center mb-6">ADDITIONAL TERMS OF USE FOR MCPs</h2>
+
+              <div className="space-y-4">
+                <p>These terms and conditions specific to MCPs ("MCP Terms") form a legally binding agreement between MEDICOSTSAVER, india ("We" or "Us" or Our or "MEDICOSTSAVER" or "Company"), having its registered office Hyderabad, india and You ("You" or "Your"), as an MCP User of Our Website, System and Services.</p>
+
+                <p>You and We are hereinafter collectively referred to as the "Parties".</p>
+
+                <p>By clicking "sign up" or "start my free trial" or "get started for free" or the 'I accept' tab at the time of registration, or by entering into an agreement with MEDICOSTSAVER to provide committed services as set out in these MCP Terms, or through the continued use of the System and/or Services, or by Accessing the System and/or Services through any medium, including but not limited to accessing the System through mobile phones, smart phones and tablets, You agree to be subject to these MCP Terms.</p>
+
+                <p>We request You to please read these MCP Terms carefully and do not click "sign up" or "start my free trial" or "get started for free" "I accept" or continue the use of the Website, System and Service unless You agree fully with these MCP Terms.</p>
+
+                <p>These MCP Terms are in addition to the Terms of Use of the Website available at <a href="https://www.medicostsaver.com/terms" className="text-blue-600 underline">https://www.medicostsaver.com/terms</a>, the Privacy Policy <a href="https://www.medicostsaver.com/privacy" className="text-blue-600 underline">https://www.medicostsaver.com/privacy</a> and any other policy which may govern the use of the Website, System and Services (referred to as the "Other Terms" and collectively with the MCP Terms referred to as "Agreement")</p>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">1. Definitions</h3>
+              <p className="mb-3">As used in these MCP Terms, the following terms shall have the meaning set forth below:</p>
+              <ul className="list-disc list-inside space-y-2 ml-4">
+                <li><strong>"Account"</strong> means credit or debit balance maintained by You with the Website;</li>
+                <li><strong>"Effective Date"</strong> means the Date on which You accept these MCP Terms by clicking 'Sign Up' or "start my free trial" or "get started for free" or 'I Accept';</li>
+                <li><strong>"User Information"</strong> means information regarding Registered Users/Members which includes personal and medical information and any other information which may be provided by a Registered Users/Members to You or may be transferred to You by MEDICOSTSAVER;</li>
+                <li><strong>"Services"</strong> means the services offered to You by MEDICOSTSAVER that involves use of the System, which may include the practice management service, electronic medical records service and other services as may be introduced by MEDICOSTSAVER from time to time;</li>
+                <li><strong>"Website"</strong> means www.medicostsaver.com</li>
+                <li><strong>"System"</strong> means the technology platform provided as part of the Website consisting of hardware and / or software used or provided by Us for the purpose of providing the Services to You;</li>
+              </ul>
+              <p className="mt-3">All other capitalized terms shall have the meaning ascribed to them in the Other Terms.</p>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">2. Grant of Rights</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="font-semibold">(i)</p>
+                  <p className="ml-4">Subject to the terms of the Agreement, we grant to You and You accept a non-exclusive, personal, non-transferable, limited right to have access to and to use the System for the duration of Your engagement with Us.</p>
+                  <p className="ml-4 mt-2">The aforementioned right does not extend to:</p>
+                  <ul className="list-disc list-inside space-y-1 ml-8">
+                    <li>use the System for time-sharing, rental or service bureau purposes;</li>
+                    <li>make the System, in whole or in part, available to any other person, entity or business;</li>
+                    <li>modify the contents of the Systems and the Website or use such content for any commercial purpose, or any public display, performance, sale or rental other than envisaged in the Agreement;</li>
+                    <li>copy, reverse engineer, decompile or disassemble the System or the Website, in whole or in part, or otherwise attempt to discover the source code to the software used in the System; or</li>
+                    <li>modify the System or associated software or combine the System with any other software or services not provided or approved by Us.</li>
+                  </ul>
+                  <p className="ml-4 mt-2">You will obtain no rights to the System except for the limited rights to use the System expressly granted by these MCP Terms.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(ii)</p>
+                  <p className="ml-4">The System/Website may links or references which direct you to third party websites / applications / content or service providers, including advertisers and e-commerce websites (collectively referred to as "Third Party Websites"). Links to such Third Party Websites are provided for your convenience only. Please exercise your independent judgment and prudence when visiting / using any Third Party Websites via a link available on the System / Website. Should You decide to click on the links to visit such Third Party Website, You do so of Your own volition. Your usage of such Third Party Websites and all content available on such Third Party Websites is subject to the terms of use of the respective Third Party Website and we are not responsible for Your use of any Third Party Websites</p>
+                </div>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">3. Implementation Requirements</h3>
+              <p>By accepting these MCP Terms, You agree that:</p>
+              <div className="ml-4">
+                <p className="font-semibold">(i)</p>
+                <p className="ml-4">You will acquire, install, configure and maintain all hardware, software and communications systems necessary to access the System ("Implementation") and receive the Services. To the extent possible, such an assessment should be done before making advance payment for the Service. Your Implementation will comply with the specifications from time to time established by Us. You will ensure that Your Implementation is compatible with the System and Services. If We notify You that Your Implementation is incompatible with the System and / or Services, You will rectify such incompatibility, and We will have the right to suspend Services to You until such rectification has been implemented. Under no circumstances will You be eligible for any refund or any financial assistance in relation to Implementation.</p>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">4. Engagement of MCPs by MEDICOSTSAVER</h3>
+              <div className="ml-4">
+                <p className="font-semibold">(i)</p>
+                <p className="ml-4">In certain cases, You and MEDICOSTSAVER may agree that You will commit to providing information and responses on the Website for a specific period of time (such as a specific number of hours per day / week/ month). In such a case, while all the terms of the Agreement will continue to apply to You, there may be some additional terms which will apply to You which will be agreed between You and MEDICOSTSAVER.</p>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">5. Access to the System and Use of Services</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold">(i) Verification.</p>
+                  <p className="ml-4">You agree that Your receipt of Services is subject to verification by Us of Your identity and credentials as a health care practitioner and to Your ongoing qualification as such. As part of the registration process and at any time thereafter, You may be required to provide Us with various information such as Your Photo Id, Your medical registration details (as recognized by your Medical Council), Your qualifications and other information in order to prove that You are a valid health care practitioner in the field that You claim ("Credential Information"). We may verify such Credential Information or may ask You for additional information. We may also make enquiries from third parties to verify the authenticity of Your Credential Information. You authorize Us to make such enquiries from such third parties, and You agree to hold them and Us harmless from any claim or liability arising from the request for or disclosure of such information. You agree that We may terminate Your access to or use of the System and Services at any time if We are unable at any time to determine or verify Your Credential Information. We reserve the right to carry out re-verification of Credential Information as and when required, and the above rights and commitments will extend to re-verification as well.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(ii) Safeguards.</p>
+                  <ul className="list-disc list-inside space-y-2 ml-4">
+                    <li>You will implement and maintain appropriate administrative, physical and technical safeguards to protect the System from access, use or alteration; and You will always use the User ID assigned to You.</li>
+                    <li>You will immediately notify Us of any breach or suspected breach of the security of the System of which You become aware, or any unauthorized use or disclosure of information within or obtained from the System, and You will take such action to mitigate the breach or suspected breach as We may direct, and will cooperate with Us in investigating and mitigating such breach.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(iii) No Third-Party Access.</p>
+                  <p className="ml-4">You will not permit any third party to have access to the System or to use the System or the Services without Our prior written consent. You will not allow any third party to access the System or provide information to Registered Users/ Non-Registered Users on the Website. You will promptly notify Us of any order or demand for compulsory disclosure of health information if the disclosure requires access to or use of the System or Services.</p>
+                </div>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">6. Compliance</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold">(i)</p>
+                  <p className="ml-4">You are solely responsible for ensuring that Your use of the System and the Services complies with applicable law. You will also ensure that Your use of the System, the Website and the Services in always in accordance with the terms of the Agreement. You will not undertake or permit any unlawful use of the System or Services, or take any action that would render the operation or use of the System or Services by us.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(ii)</p>
+                  <p className="ml-4">Without limiting the generality of the foregoing, You represent that You shall not use the System in violation of any applicable laws including Medical Ethics Regulations or any other code of conduct governed by your council. Notwithstanding the generality of the foregoing, You shall not use the System to:</p>
+                  <ul className="list-disc list-inside space-y-1 ml-8">
+                    <li>Interact with a Registered Users at the time of medical emergencies.</li>
+                    <li>Discriminate in any way between appointments booked in the ordinary course and appointments booked through MEDICOSTSAVER.</li>
+                    <li>Boast of cases, operations, cures or remedies through System, Services or Website.</li>
+                    <li>Directly or indirectly solicit Registered Users for consultation.</li>
+                    <li>Claim to be a specialist, through System, Services or Website, unless You have a special qualification in that branch.</li>
+                    <li>Give any positive assertion or representation regarding the risk-free nature of communicating over online media.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(iii)</p>
+                  <p className="ml-4">You shall keep Your Credential Information updated and will inform Us immediately should any portion of Your Credential Information be revoked, is cancelled or expires.</p>
+                </div>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">7. User Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold">(i)</p>
+                  <p className="ml-4">You hereby acknowledge that You may get access to User Information including identifiable health related information.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(ii)</p>
+                  <p className="ml-4">You represent and warrant that You will, at all times during the use of the Services and thereafter, comply with all laws directly or indirectly applicable to You that may now or hereafter govern the collection, use, transmission, processing, receipt, reporting, disclosure, maintenance, and storage of User Information, including but not limited to the Information Technology Act, 2000 and The Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 made thereunder.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(iii)</p>
+                  <p className="ml-4">Notwithstanding the generality of the aforementioned provision:</p>
+                  <ul className="list-disc list-inside space-y-2 ml-8">
+                    <li>You acknowledge that You have read, understood and agree to comply with MEDICOSTSAVER's Privacy Policy available at <a href="https://www.medicostsaver.com/privacy" className="text-blue-600 underline">https://www.medicostsaver.com/privacy</a> when dealing with User Information.</li>
+                    <li>You represent and warrant that You will not use the User Information of Registered Users and Non-Registered Users for any other purpose than for providing information to such Registered Users and Non-Registered Users and /or fixing appointments with the Registered Users.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">8. Cooperation</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold">(i)</p>
+                  <p className="ml-4">You will cooperate with Us in the administration of the System, including providing reasonable assistance in evaluating the System and collecting and reporting data requested by Us for the purposes of administering the System.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(ii)</p>
+                  <p className="ml-4">We may provide Your reference to other potential users of the system as a referral to Our Services. In case You would not like to be contacted by potential users, You can send Us an email at <a href="mailto:medicostsaver@gmail.com" className="text-blue-600 underline">medicostsaver@gmail.com</a> regarding the same. We shall cease providing Your reference to potential users within 48 hours of receipt of such written request.</p>
+                </div>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">9. Providing Physician Data</h3>
+              <p>You agree that We may provide de-identified health information and other information including Your personal information and information concerning Your practice to any medical group, independent practice associations, health plan or other organization including any organization with which You have a contract to provide medical services, or to whose members or enrollees You provide dental services. Such information may identify You, but will not identify any individual to whom You provide services. Such information may include (without limitation) aggregate data concerning Your patients, diagnoses, procedures, orders etc.</p>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">10. Intellectual Property Rights</h3>
+              <p>All intellectual property rights in and title to the System, the present or future modifications / upgradations thereof and standard enhancements thereto shall remain the property of MEDICOSTSAVER and its licensors. These MCP Terms or the Agreement do not and shall not transfer any ownership or proprietary interest in the System from MEDICOSTSAVER to You, except as may be otherwise expressly provided in these MCP Terms or as may be agreed to by and between MEDICOSTSAVER and You.</p>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">11. Fees and Charges</h3>
+              <ul className="list-disc list-inside space-y-2 ml-4">
+                <li>You understand that MEDICOSTSAVER provides various Services to its members for free with minimal fees and you agreed to provide those services for free.</li>
+                <li>we wont charge any fees from MCPS for joining as a Provider.</li>
+                <li>You are responsible for any charges you collect it from Users outside the platform (website)</li>
+              </ul>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">12. Confidential Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold">(a)</p>
+                  <p className="ml-4">You will treat all information received from Us as confidential. You may not disclose Our confidential information to any other person, and You may not use any confidential information except as provided herein. Except as otherwise provided in MCP Terms and Other Terms, You may not, without Our prior written consent, at any time, during or after the applicability of these MCP Terms, directly or indirectly, divulge or disclose confidential information for any purpose or use confidential information for Your own benefit or for the purposes or benefit of any other person. You agree to hold all confidential information in strict confidence and to take all measures necessary to prevent unauthorized copying, use, or disclosure of confidential information, and to keep the confidential information from being disclosed into the public domain or into the possession of persons not bound to maintain confidentiality. You will disclose confidential information only to your employees, agents or contractors who have a need to use it for the purposes permitted under the MCP Terms and Other Terms only. You will inform all such recipients of the confidential nature of confidential information and will instruct them to deal with confidential information in accordance with these MCP Terms. You will promptly notify Us in writing of any improper disclosure, misappropriation, or misuse of the confidential information by any person, which may come to Your attention.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(b)</p>
+                  <p className="ml-4">You agree that We will suffer irreparable harm if You fail to comply with the obligations set forth in this Section 12, and You further agree that monetary damages will be inadequate to compensate Us for any such breach. Accordingly, You agree that We will, in addition to any other remedies available to Us at law or in equity, be entitled to seek injunctive relief to enforce the provisions hereof, immediately and without the necessity of posting a bond.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(c)</p>
+                  <p className="ml-4">This Section 12 will survive the termination or expiration of these MCP Terms or Agreement for any reason.</p>
+                </div>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">13. Disclaimer and Exclusion of Warranties</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold">(a)</p>
+                  <p className="ml-4">You acknowledge that access to the system will be provided over various facilities and communication lines, and information will be transmitted over local exchange and internet backbone carrier lines and through routers, switches, and other devices (collectively, "carrier lines") owned, maintained, and serviced by third-party carriers, utilities, and internet service providers, all of which are beyond our control. we assume no liability for or relating to the integrity, privacy, security, confidentiality, or use of any information while it is transmitted on the carrier lines, or any delay, failure, interruption, interception, loss, transmission, or corruption of any data or other information attributable to transmission on the carrier lines. use of the carrier lines is solely at your risk and is subject to all applicable local, state, national, and international laws.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(b)</p>
+                  <p className="ml-4">The services, the website the system, access to the system and the information contained on the system is provided "as is" and "as available" basis without any warranty of any kind, expressed or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, and non-infringement. you are solely responsible for any and all acts or omissions taken or made in reliance on the system or the information in the system, including inaccurate or incomplete information. it is expressly agreed that in no event shall we be liable for any special, indirect, consequential, remote or exemplary damages, including but not limited to, loss of profits or revenues, loss of use, or loss of information or data, whether a claim for any such liability or damages is premised upon breach of contract, breach of warranty, negligence, strict liability, or any other theory of liability, even if we have been apprised of the possibility or likelihood of such damages occurring. we disclaim any and all liability for erroneous transmissions and loss of service resulting from communication failures by telecommunication service providers or the system.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(c)</p>
+                  <p className="ml-4">You acknowledge that other users have access to the system and are receiving our services. such other users have committed to comply with these terms & conditions and our policies and procedures concerning use of the system; however, the actions of such other users are beyond our control. accordingly, we do not assume any liability for or relating to any impairment of the privacy, security, confidentiality, integrity, availability, or restricted use of any information on the system resulting from any users' actions or failures to act.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(d)</p>
+                  <p className="ml-4">We are not responsible for unauthorized access to your, data, facilities or equipment by individuals or entities using the system or for unauthorized access to, alteration, theft. corruption, loss or destruction of your, data files, programs, procedures, or information through the system, whether by accident, fraudulent means or devices, or any other means. you are solely responsible for validating the accuracy of all output and reports, and for protecting your data and programs from loss by implementing appropriate security measures, including routine backup procedures. you hereby waive any damages occasioned by lost or corrupt data, incorrect reports, or incorrect data files resulting from programming error, operator error, equipment or software malfunction, security violations, or the use of third-party software. we are not responsible for the content of any information transmitted or received through our provision of the services.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(e)</p>
+                  <p className="ml-4">We expressly disclaim any liability for the consequences to you arising because of your use of the system or the services.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(f)</p>
+                  <p className="ml-4">We do not warrant that your use of the system and the services under these terms will not violate any law or regulation applicable to you.</p>
+                </div>
+              </div>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">14. Limitation Of Liability</h3>
+              <p>Notwithstanding the other Terms of these MCP terms, in the event Medicostsaver should have any liability to you or any third party for any loss, harm or damage, you and Medicostsaver agree that such liability shall under no circumstances exceed the value of any fees received by Medicostsaver from you in the preceding twelve months or inr 5000 whichever is lower. you and Medicostsaver agree that the foregoing limitation of liability is an agreed allocation of risk between you and Medicostsaver. you acknowledge that without your assent to this section 14, Medicostsaver would not provide access to the system, to you.</p>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">15. Indemnification</h3>
+              <p>You agree to indemnify, defend, and hold harmless MEDICOSTSAVER, Our and their affiliates, officers, directors, and agents, from and against any claim, cost or liability, including reasonable attorneys' fees, arising out of: (a) the use of the Services; (b) any breach by You of any representations, warranties or agreements contained in these MCP Terms; (c) the actions of any person gaining access to the System under a User ID assigned to You; (d) the actions of anyone using a User ID, password or other unique identifier assigned to You that adversely affects the System or any information accessed through the System;</p>
+
+              <h3 className="font-bold text-lg mt-6 mb-4">16. Termination; Modification; Suspension; Termination</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold">(a)</p>
+                  <p className="ml-4">We or You may terminate our Services at any time without cause upon thirty (30) days prior written notice to You.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(b)</p>
+                  <p className="ml-4">We may update or change the Services and/or the MCP Terms and/ or the Service Fee set forth in these MCP Terms from time to time and recommend that You review these MCP Terms on a regular basis. You understand and agree that Your continued use of the Services after the MCP Terms has been updated or changed constitutes Your acceptance of the revised MCP Terms. Without limiting the foregoing, if We make a change to these MCP Terms that materially affects Your use of the Services, We may post notice on the Website or notify You via email of any such change.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(c)</p>
+                  <p className="ml-4">Termination, Suspension or Amendment as a result of applicable laws - Notwithstanding anything to the contrary in these MCP Terms, We have the right, on providing notice to You, immediately to terminate, suspend, or amend the provision of the Services without liability: (a) to comply with any order issued or proposed to be issued by any governmental agency; (b) to comply with any provision of law, any standard of participation in any reimbursement program, or any accreditation standard; or (c) if performance of any term of these MCP Terms by either Party would cause it to be in violation of law.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(d)</p>
+                  <p className="ml-4">We may terminate the provision of Services to You through the System immediately upon notice to You: (i) if You are named as a defendant in a criminal proceeding for a violation of federal or state law; (ii) if a finding or stipulation is made or entered into that You have violated any standard or requirement of federal or state law relating to the privacy or security of health information is made in any administrative or civil proceeding; or (iii) You cease to be qualified to provide services as a health care professional, or We are unable to verify Your qualifications as notified to Us under these MCP Terms.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(e)</p>
+                  <p className="ml-4">We may suspend Your Services immediately pending Your cure of any breach of these MCP Terms, or in the event We determine in Our sole discretion that access to or use of the System by You may jeopardize the System or the confidentiality, privacy, security, integrity or availability of information within the System, or that You have violated or may violate these MCP Terms or Other Terms, or has jeopardized or may jeopardize the rights of any third party, or that any person is or may be making unauthorized use of the System with any User ID assigned to You. Our election to suspend the Services shall not waive or affect Our rights to terminate these MCP Terms as applicable to You as permitted under these MCP Terms.</p>
+                </div>
+
+                <div>
+                  <p className="font-semibold">(f)</p>
+                  <p className="ml-4">Upon termination, You will cease to use the System and We will terminate Your access to the System. Upon termination for any reason, You will remove all software provided under MCP Terms from Your computer systems, You will cease to have access to the System, and You will return to Us all hardware, software and documentation provided by or on behalf of Us.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter className="flex gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setTermsDialogOpen(false);
+                setAcceptTerms(false);
+              }}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                setTermsDialogOpen(false);
+                setAcceptTerms(true);
+              }}
+              disabled={!hasScrolledToBottom}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              I Accept Terms
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
