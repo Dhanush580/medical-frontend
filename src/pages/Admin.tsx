@@ -521,18 +521,6 @@ const Admin = () => {
                               </div>
 
                               <div className="flex gap-1 sm:gap-2 flex-wrap">
-                                {app.passportPhoto && (
-                                  <img 
-                                    src={assetUrl(app.passportPhoto)} 
-                                    alt="passport" 
-                                    className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-cover rounded cursor-pointer border hover:shadow-md transition-all"
-                                    onClick={() => openViewer(assetUrl(app.passportPhoto))}
-                                    onError={(e) => {
-                                      e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
-                                      e.currentTarget.alt = 'Image not available';
-                                    }}
-                                  />
-                                )}
                                 {app.certificateFile && (
                                   app.certificateFile.includes('application/pdf') || app.certificateFile.toLowerCase().includes('.pdf') ? (
                                     <a
@@ -1072,24 +1060,6 @@ const Admin = () => {
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Document Uploads</h3>
                 </div>
                 <div className="space-y-3 sm:space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-1 sm:mb-2 text-xs sm:text-sm text-muted-foreground">Passport Photo</h4>
-                    {selectedApp.passportPhoto ? (
-                      <img 
-                        src={assetUrl(selectedApp.passportPhoto)} 
-                        alt="passport" 
-                        className="h-24 w-24 sm:h-32 sm:w-32 object-cover rounded-lg cursor-pointer border hover:shadow-md transition-all"
-                        onClick={() => openViewer(assetUrl(selectedApp.passportPhoto))}
-                        onError={(e) => {
-                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjE2QzE0IDE3LjEgMTMuMSAxOCA5LjUgMTJDOS41IDE4IDkgMTcuMSAxOSA5QzkgOC45IDkuMSAxOCA5LjUgMTJDOS41IDE4IDEwIDE3LjEgMTAgMTZWMTRDMTAgMi45IDEwLjkgMiAxMiAyWk0xMiA3QzEyLjU1IDcgMTMgNy40NSAxMyA4UzEyLjU1IDkgMTIgOVMxMSA4LjU1IDExIDhTMTIuNDUgNyAxMiA3Wk0xMiAxNWMtMS42NiAwLTMtMS4zNC0zLTNTMTAuMzQgMTMgMTIgMTNTMTQuMzQgMTYgMTYgMTZTMzMuNjYgMTUgMTIgMTVaIiBmaWxsPSIjOWNhM2FmIi8+Cjwvc3ZnPgo=';
-                          e.currentTarget.alt = 'Image not available';
-                        }}
-                      />
-                    ) : (
-                      <div className="text-xs sm:text-sm text-muted-foreground">No passport image uploaded</div>
-                    )}
-                  </div>
-
                   <div>
                     <h4 className="font-semibold mb-1 sm:mb-2 text-xs sm:text-sm text-muted-foreground">Certificate</h4>
                     {selectedApp.certificateFile ? (

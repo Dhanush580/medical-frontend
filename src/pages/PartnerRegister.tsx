@@ -64,7 +64,6 @@ const PartnerRegister = () => {
   const [currentDiscountItem, setCurrentDiscountItem] = useState("");
 
   // files
-  const [passportPhoto, setPassportPhoto] = useState<File | null>(null);
   const [certificateFile, setCertificateFile] = useState<File | null>(null);
   const [clinicPhotos, setClinicPhotos] = useState<FileList | null>(null);
 
@@ -102,7 +101,6 @@ const PartnerRegister = () => {
     setCustomSpecialization("");
     setClinicName("");
     setCenterName("");
-    setPassportPhoto(null);
     setCertificateFile(null);
     setClinicPhotos(null);
     setPincode("");
@@ -129,8 +127,6 @@ const PartnerRegister = () => {
     // specialization required for doctors and dentists
     if ((role === 'doctor' || role === 'dentist') && !specialization) return 'Please select your specialization.';
     if ((role === 'doctor' || role === 'dentist') && specialization === 'Other' && !customSpecialization.trim()) return 'Please enter your specialization.';
-    // doctor and dentist specific file checks
-    if ((role === 'doctor' || role === 'dentist') && !passportPhoto) return 'Please upload passport photo for the practitioner.';
     // centers require certificate
     if ((role === 'diagnostic' || role === 'pharmacy') && !certificateFile) return 'Please upload the government registration certificate.';
     // discount validation
@@ -188,8 +184,6 @@ const PartnerRegister = () => {
         // center (diagnostic / pharmacy)
         form.append('centerName', centerName);
       }
-      // passportPhoto is optional for all roles but can be uploaded
-      if (passportPhoto) form.append('passportPhoto', passportPhoto, passportPhoto.name);
       // certificate is required for centers, optional for doctors and dentists
       if (certificateFile) form.append('certificateFile', certificateFile, certificateFile.name);
 
@@ -789,28 +783,7 @@ const PartnerRegister = () => {
                   <div className="w-1.5 h-6 sm:h-8 bg-red-500 rounded-full"></div>
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Document Uploads</h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    <div className="space-y-1.5 sm:space-y-2">
-                      <Label className="text-xs sm:text-sm font-medium text-gray-700 flex items-center gap-1.5 sm:gap-2">
-                        Passport Photo {role === 'doctor' || role === 'dentist' ? '(Required)' : '(Optional)'}
-                        {passportPhoto && <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />}
-                      </Label>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 sm:p-4 md:p-6 text-center transition-all duration-200 hover:border-blue-400 hover:bg-blue-50/50 relative">
-                        <Upload className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-gray-400 mx-auto mb-1.5 sm:mb-2" />
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => setPassportPhoto(e.target.files?.[0] || null)}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        />
-                        <p className="text-xs sm:text-sm text-gray-600 relative z-0">
-                          {passportPhoto ? passportPhoto.name : 'Click to upload passport photo'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
+                <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6">
                   <div className="space-y-3 sm:space-y-4">
                     <div className="space-y-1.5 sm:space-y-2">
                       <Label className="text-xs sm:text-sm font-medium text-gray-700 flex items-center gap-1.5 sm:gap-2">
