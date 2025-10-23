@@ -111,11 +111,10 @@ const Index = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight"
+            className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-black sm:font-bold mt-4 mb-4 md:mb-6 leading-tight"
           >
             <span className="block md:inline">Affordable Healthcare</span>
-            <br />
-            <span className="text-blue-300">For Every Indian Family</span>
+            <span className="block text-blue-300 md:inline md:ml-2">For Every Indian Family</span>
           </motion.h1>
           
           <motion.p 

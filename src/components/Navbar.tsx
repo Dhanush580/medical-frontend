@@ -76,7 +76,7 @@ const Navbar = () => {
           {/* Logo - Centered on mobile, left on desktop */}
           <div className="flex items-center gap-2">
             <Heart className="h-6 w-6 md:h-8 md:w-8 text-primary" />
-            <span className="text-lg md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-sm md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               MEDI COST SAVER
             </span>
           </div>
